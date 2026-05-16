@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <title>לוגו HIDOS</title>
+  <style>
+    body { background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 24px; font-family: Arial; }
+    canvas { border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    button { padding: 12px 28px; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: bold; }
+    .dl-square { background: #e2b96f; color: #1a1a2e; }
+    .dl-wide { background: #16213e; color: #e2b96f; border: 1px solid #e2b96f; }
+  </style>
+</head>
+<body>
+<canvas id="c" width="800" height="800"></canvas>
+<div class="btns">
+  <button class="dl-square" onclick="download('logo_square.png', 1080, 1080)">⬇ ריבוע אינסטגרם (1080×1080)</button>
+  <button class="dl-wide" onclick="download('logo_wide.png', 1200, 500)">⬇ רחב לאפליקציה (1200×500)</button>
+</div>
+
+<script>
+const img = new Image();
+img.src = 'ashdod.png.png';
+img.onload = () => drawLogo(document.getElementById('c'), 800, 800);
+
+function drawLogo(canvas, W, H) {
+  const ctx = canvas.getContext('2d');
+  canvas.width = W; canvas.height = H;
+  const isWide = W > H;
+  const cx = W / 2, cy = H / 2;
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0d1b2e');
+  bg.addColorStop(1, '#16324f');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Gold outer border
+  ctx.strokeStyle = '#e2b96f';
+  ctx.lineWidth = isWide ? 6 : 10;
+  const pad = isWide ? 14 : 20;
+  roundRect(ctx, pad, pad, W-pad*2, H-pad*2, 28);
+  ctx.stroke();
+
+  // Inner subtle border
+  ctx.strokeStyle = 'rgba(226,185,111,0.2)';
+  ctx.lineWidth = 2;
+  roundRect(ctx, pad+14, pad+14, W-pad*2-28, H-pad*2-28, 20);
+  ctx.stroke();
+
+  if (isWide) {
+    // ── WIDE LAYOUT ──
+    const logoSize = H * 0.7;
+    const logoX = W * 0.18 - logoSize / 2;
+    const logoY = cy - logoSize / 2;
+    ctx.drawImage(img, logoX, logoY, logoSize, logoSize);
+
+    // Separator
+    ctx.strokeStyle = 'rgba(226,185,111,0.35)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.4, cy - H * 0.3);
+    ctx.lineTo(W * 0.4, cy + H * 0.3);
+    ctx.stroke();
+
+    // Text
+    const tx = W * 0.7;
+    ctx.textAlign = 'center';
+    ctx.direction = 'rtl';
+
+    ctx.fillStyle = '#e2b96f';
+    ctx.font = `bold ${H * 0.13}px Arial`;
+    ctx.fillText('ניהול', tx, cy - H * 0.12);
+    ctx.fillText('חידושי חתימה', tx, cy + H * 0.06);
+
+    ctx.strokeStyle = 'rgba(226,185,111,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(tx - W * 0.2, cy + H * 0.16);
+    ctx.lineTo(tx + W * 0.2, cy + H * 0.16);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(226,185,111,0.65)';
+    ctx.font = `${H * 0.08}px Arial`;
+    ctx.fillText('בסיס אשדוד', tx, cy + H * 0.28);
+
+  } else {
+    // ── SQUARE LAYOUT ──
+    const logoSize = W * 0.52;
+    ctx.drawImage(img, cx - logoSize/2, H * 0.1, logoSize, logoSize);
+
+    // Gold divider
+    ctx.strokeStyle = 'rgba(226,185,111,0.45)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - W*0.3, H * 0.67);
+    ctx.lineTo(cx + W*0.3, H * 0.67);
+    ctx.stroke();
+
+    // Title
+    ctx.textAlign = 'center';
+    ctx.direction = 'rtl';
+    ctx.fillStyle = '#e2b96f';
+    ctx.font = `bold ${W * 0.1}px Arial`;
+    ctx.fillText('ניהול חידושי חתימה', cx, H * 0.79);
+
+    // Subtitle
+    ctx.fillStyle = 'rgba(226,185,111,0.65)';
+    ctx.font = `${W * 0.065}px Arial`;
+    ctx.fillText('בסיס אשדוד', cx, H * 0.9);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function download(name, w, h) {
+  const c = document.createElement('canvas');
+  drawLogo(c, w, h);
+  const a = document.createElement('a');
+  a.download = name;
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
