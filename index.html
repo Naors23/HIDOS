@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HIDOS - חידוש השאלה</title>
+  <title>HIDOS</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1a1a2e" />
   <style>
@@ -20,206 +20,158 @@
     header {
       width: 100%;
       background: #16213e;
-      padding: 16px 20px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-    header h1 { font-size: 1.4rem; color: #e2b96f; }
-    nav { display: flex; gap: 10px; }
+    header h1 { font-size: 1.3rem; color: #e2b96f; }
+    nav { display: flex; gap: 8px; }
     nav button {
-      background: transparent;
-      border: 1px solid #444;
-      color: #ccc;
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
+      background: transparent; border: 1px solid #444; color: #ccc;
+      padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;
     }
-    nav button.active {
-      background: #e2b96f;
-      color: #1a1a2e;
-      border-color: #e2b96f;
-      font-weight: bold;
-    }
-    .screen {
-      display: none;
-      width: 100%;
-      max-width: 520px;
-      padding: 16px;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .screen.active { display: flex; }
+    nav button.active { background: #e2b96f; color: #1a1a2e; border-color: #e2b96f; font-weight: bold; }
 
-    /* ── CONTACTS LIST ── */
-    .search-bar input {
-      width: 100%;
-      background: #16213e;
-      border: 1px solid #333;
-      border-radius: 10px;
-      padding: 12px 16px;
-      color: #fff;
-      font-size: 1rem;
-      text-align: right;
-    }
-    .search-bar input:focus { outline: none; border-color: #e2b96f; }
+    .page { display: none; width: 100%; max-width: 520px; padding: 16px; flex-direction: column; gap: 12px; }
+    .page.active { display: flex; }
 
-    .contact-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    /* ── SCAN PAGE ── */
+    .btn-camera {
+      width: 100%; padding: 18px; border: none; border-radius: 14px;
+      font-size: 1.1rem; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #e2b96f, #c99a3e); color: #1a1a2e;
     }
+    .ocr-box {
+      background: #16213e; border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ocr-box label { color: #aaa; font-size: 0.8rem; }
+    .ocr-box input {
+      background: #1a1a2e; border: 1px solid #444; border-radius: 8px;
+      padding: 10px 14px; color: #fff; font-size: 1rem; width: 100%; text-align: right;
+    }
+    .ocr-box input:focus { outline: none; border-color: #e2b96f; }
+    .ocr-result-text { font-size: 0.85rem; color: #aaa; }
+    .ocr-result-text span { color: #e2b96f; }
+    .btn-add {
+      width: 100%; padding: 12px; border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: bold; cursor: pointer;
+      background: #2a5a3a; color: #4caf50; border: 1px solid #4caf50;
+    }
+    .btn-add:disabled { opacity: 0.3; cursor: default; }
 
-    .contact-item {
-      background: #16213e;
-      border-radius: 12px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.15s;
+    .divider { text-align: center; color: #444; font-size: 0.8rem; position: relative; }
+    .divider::before, .divider::after {
+      content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: #333;
     }
-    .contact-item.selected { border-color: #e2b96f; }
-    .contact-item:hover { border-color: #444; }
+    .divider::before { right: 0; } .divider::after { left: 0; }
 
-    .contact-checkbox {
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border: 2px solid #444;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 14px;
-      transition: all 0.15s;
+    .manual-search { display: flex; gap: 8px; }
+    .manual-search input {
+      flex: 1; background: #16213e; border: 1px solid #333; border-radius: 10px;
+      padding: 11px 14px; color: #fff; font-size: 0.95rem; text-align: right;
     }
-    .contact-item.selected .contact-checkbox {
-      background: #e2b96f;
-      border-color: #e2b96f;
-      color: #1a1a2e;
+    .manual-search input:focus { outline: none; border-color: #e2b96f; }
+    .search-results {
+      background: #16213e; border-radius: 10px; overflow: hidden;
+      display: flex; flex-direction: column;
     }
+    .search-result-item {
+      padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1a1a2e;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .search-result-item:hover { background: #1e2d4e; }
+    .search-result-item:last-child { border-bottom: none; }
 
-    .contact-info { flex: 1; }
-    .contact-name { font-size: 1rem; font-weight: bold; }
-    .contact-phone { font-size: 0.8rem; color: #888; margin-top: 2px; }
-
-    .select-all-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 4px 2px;
+    /* ── QUEUE ── */
+    .queue-header {
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .select-all-row button {
-      background: transparent;
-      border: none;
-      color: #e2b96f;
-      cursor: pointer;
-      font-size: 0.85rem;
-      text-decoration: underline;
+    .queue-header h3 { color: #e2b96f; font-size: 1rem; }
+    .queue-header span { color: #aaa; font-size: 0.85rem; }
+    .queue-list { display: flex; flex-direction: column; gap: 8px; }
+    .queue-item {
+      background: #16213e; border-radius: 10px; padding: 12px 16px;
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .selected-count { color: #aaa; font-size: 0.85rem; }
+    .queue-item-name { font-weight: bold; font-size: 0.95rem; }
+    .queue-item-phone { font-size: 0.8rem; color: #888; }
+    .btn-remove {
+      background: transparent; border: none; color: #666; cursor: pointer;
+      font-size: 1.1rem; padding: 4px 8px;
+    }
+    .btn-remove:hover { color: #f44336; }
+    .empty-queue { text-align: center; color: #555; padding: 30px; font-size: 0.9rem; }
 
-    /* ── SYSTEM + SEND ── */
+    /* ── ACTION BAR ── */
     .action-bar {
-      position: sticky;
-      bottom: 0;
-      background: #1a1a2e;
-      padding: 14px 16px;
-      border-top: 1px solid #2a2a3e;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      max-width: 520px;
+      width: 100%; max-width: 520px;
+      position: sticky; bottom: 0;
+      background: #1a1a2e; border-top: 1px solid #2a2a3e;
+      padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;
     }
-
     .system-btns { display: flex; gap: 10px; }
     .btn-atli {
-      flex: 1; padding: 13px; border: 2px solid transparent;
-      border-radius: 12px; font-size: 0.95rem; font-weight: bold;
-      cursor: pointer; background: linear-gradient(135deg, #7c5cbf, #5a3fa0);
-      color: #fff; transition: opacity 0.2s;
+      flex: 1; padding: 12px; border: 2px solid transparent; border-radius: 12px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #7c5cbf, #5a3fa0); color: #fff;
     }
     .btn-yeudi {
-      flex: 1; padding: 13px; border: 2px solid #2a5a8c;
-      border-radius: 12px; font-size: 0.95rem; font-weight: bold;
-      cursor: pointer; background: linear-gradient(135deg, #1a3a5c, #0f2440);
-      color: #fff; transition: opacity 0.2s;
+      flex: 1; padding: 12px; border: 2px solid #2a5a8c; border-radius: 12px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #1a3a5c, #0f2440); color: #fff;
     }
-    .btn-atli.selected { border-color: #fff; box-shadow: 0 0 0 2px #7c5cbf; }
-    .btn-yeudi.selected { border-color: #4fc3f7; box-shadow: 0 0 0 2px #1a3a5c; }
-
+    .btn-atli.active-sys { border-color: #fff; }
+    .btn-yeudi.active-sys { border-color: #4fc3f7; }
     .btn-send-all {
-      width: 100%; padding: 15px; border: none; border-radius: 12px;
-      font-size: 1.1rem; font-weight: bold; cursor: pointer;
-      background: #25d366; color: #fff; opacity: 0.4;
-      transition: opacity 0.2s;
+      width: 100%; padding: 14px; border: none; border-radius: 12px;
+      font-size: 1.05rem; font-weight: bold; cursor: pointer;
+      background: #25d366; color: #fff; opacity: 0.35; transition: opacity 0.2s;
     }
     .btn-send-all.ready { opacity: 1; }
 
-    /* ── SENDING QUEUE ── */
-    .queue-screen {
-      display: flex; flex-direction: column; gap: 16px;
-      align-items: center; padding: 20px;
-    }
-    .queue-progress {
-      font-size: 0.9rem; color: #aaa; text-align: center;
-    }
-    .queue-card {
-      width: 100%; max-width: 420px;
-      background: #16213e; border-radius: 16px; padding: 24px;
+    /* ── SENDING FLOW ── */
+    .sending-page { display: none; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 520px; padding: 16px; }
+    .sending-page.active { display: flex; }
+    .progress-bar-wrap { width: 100%; background: #16213e; border-radius: 6px; height: 6px; }
+    .progress-bar { height: 100%; background: #e2b96f; border-radius: 6px; transition: width 0.3s; }
+    .progress-label { color: #aaa; font-size: 0.85rem; text-align: center; }
+    .send-card {
+      width: 100%; background: #16213e; border-radius: 16px; padding: 22px;
       display: flex; flex-direction: column; gap: 14px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
-    .queue-name { font-size: 1.5rem; font-weight: bold; text-align: center; }
-    .queue-phone { text-align: center; color: #aaa; font-size: 0.9rem; }
-    .queue-msg-preview {
-      background: #1a1a2e; border-radius: 10px; padding: 14px;
-      font-size: 0.85rem; color: #ccc; line-height: 1.7;
-      white-space: pre-line; direction: rtl; text-align: right;
-    }
-    .queue-system-badge {
-      text-align: center; padding: 6px 14px; border-radius: 20px;
-      font-size: 0.85rem; font-weight: bold; width: fit-content;
-      margin: 0 auto;
+    .send-card-badge {
+      text-align: center; padding: 5px 14px; border-radius: 20px;
+      font-size: 0.8rem; font-weight: bold; width: fit-content; margin: 0 auto;
     }
     .badge-atli { background: #5a3fa0; color: #fff; }
     .badge-yeudi { background: #0f2440; color: #4fc3f7; border: 1px solid #2a5a8c; }
-
+    .send-card-name { font-size: 1.5rem; font-weight: bold; text-align: center; }
+    .send-card-phone { text-align: center; color: #888; font-size: 0.85rem; }
+    .send-card-msg {
+      background: #1a1a2e; border-radius: 10px; padding: 14px;
+      font-size: 0.85rem; color: #ccc; line-height: 1.8; white-space: pre-line; text-align: right;
+    }
     .btn-open-wa {
-      width: 100%; padding: 16px; border: none; border-radius: 12px;
-      font-size: 1.1rem; font-weight: bold; cursor: pointer;
-      background: #25d366; color: #fff;
+      width: 100%; padding: 15px; border: none; border-radius: 12px;
+      font-size: 1.05rem; font-weight: bold; cursor: pointer;
+      background: #25d366; color: #fff; text-decoration: none;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .btn-next {
-      width: 100%; padding: 14px; border: 1px solid #444; border-radius: 12px;
-      font-size: 1rem; cursor: pointer; background: transparent; color: #ccc;
-    }
-    .btn-skip {
-      background: transparent; border: none; color: #666;
-      font-size: 0.85rem; cursor: pointer; text-decoration: underline;
-    }
-    .queue-done {
-      text-align: center; padding: 40px 20px;
-      display: flex; flex-direction: column; gap: 16px; align-items: center;
-    }
-    .queue-done .icon { font-size: 4rem; }
-    .queue-done h2 { color: #4caf50; }
-    .btn-back {
-      padding: 12px 28px; border: 1px solid #444; border-radius: 10px;
+    .btn-next-contact {
+      width: 100%; padding: 13px; border: 1px solid #333; border-radius: 12px;
       background: transparent; color: #ccc; cursor: pointer; font-size: 0.95rem;
     }
+    .btn-skip-contact { background: transparent; border: none; color: #555; cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
+    .done-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .done-icon { font-size: 4rem; }
+    .done-screen h2 { color: #4caf50; }
+    .btn-done { padding: 12px 28px; border: 1px solid #444; border-radius: 10px; background: transparent; color: #ccc; cursor: pointer; }
 
-    /* ── UPLOAD ── */
+    /* ── UPLOAD PAGE ── */
     .upload-box {
       width: 100%; border: 2px dashed #444; border-radius: 16px;
       padding: 40px 20px; text-align: center; cursor: pointer;
@@ -234,8 +186,9 @@
     .status-box.success { color: #4caf50; border: 1px solid #4caf50; }
     .status-box.error { color: #f44336; border: 1px solid #f44336; }
 
+    .loading { color: #e2b96f; font-size: 0.85rem; text-align: center; }
+    .warning { background: #3a1a1a; border: 1px solid #f44336; border-radius: 12px; padding: 14px; color: #f44336; font-size: 0.9rem; text-align: center; }
     .hidden { display: none !important; }
-    .empty-state { text-align: center; color: #555; padding: 40px 20px; font-size: 0.95rem; }
   </style>
 </head>
 <body>
@@ -243,44 +196,61 @@
 <header>
   <h1>HIDOS</h1>
   <nav>
-    <button class="active" onclick="showScreen('send', this)">שליחה</button>
-    <button onclick="showScreen('upload', this)">מאגר נתונים</button>
+    <button class="active" id="navScan" onclick="showPage('scan', this)">סריקה ושליחה</button>
+    <button id="navUpload" onclick="showPage('upload', this)">מאגר</button>
   </nav>
 </header>
 
-<!-- SEND SCREEN -->
-<div class="screen active" id="screen-send">
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="חיפוש לפי שם..." oninput="renderList()" />
+<!-- SCAN PAGE -->
+<div class="page active" id="page-scan">
+
+  <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">
+    📷 צלם תמונה מהסאפ
+  </button>
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)" />
+
+  <div id="loadingOcr" class="loading hidden">מזהה טקסט...</div>
+  <div id="warningBox" class="warning hidden"></div>
+
+  <div id="ocrBox" class="ocr-box hidden">
+    <label>שם שזוהה — ניתן לתקן:</label>
+    <input type="text" id="ocrName" placeholder="שם פרטי ושם משפחה" />
+    <div id="ocrStatus" class="ocr-result-text"></div>
+    <button class="btn-add" id="btnAdd" onclick="addToQueue()" disabled>+ הוסף לרשימת שליחה</button>
   </div>
 
-  <div class="select-all-row">
-    <button onclick="toggleSelectAll()">בחר הכל / בטל הכל</button>
-    <span class="selected-count" id="selectedCount">0 נבחרו</span>
-  </div>
+  <div class="divider">או חפש ידנית</div>
 
-  <div class="contact-list" id="contactList">
-    <div class="empty-state">טען קובץ אקסל כדי להציג אנשי קשר</div>
+  <div class="manual-search">
+    <input type="text" id="manualInput" placeholder="הכנס שם..." oninput="onManualSearch()" />
+  </div>
+  <div id="searchResults" class="search-results hidden"></div>
+
+  <div class="queue-header">
+    <h3>רשימת שליחה</h3>
+    <span id="queueCount">0 עובדים</span>
+  </div>
+  <div id="queueList" class="queue-list">
+    <div class="empty-queue">צלם תמונה מהסאפ כדי להוסיף עובדים</div>
   </div>
 </div>
 
-<!-- ACTION BAR (always visible on send screen) -->
+<!-- ACTION BAR -->
 <div class="action-bar" id="actionBar">
   <div class="system-btns">
-    <button class="btn-atli" id="btnAtli" onclick="selectSystem('atli')">🟣 אטלי</button>
-    <button class="btn-yeudi" id="btnYeudi" onclick="selectSystem('yeudi')">⬜ יעודי</button>
+    <button class="btn-atli" id="btnAtli" onclick="selectSys('atli')">🟣 אטלי</button>
+    <button class="btn-yeudi" id="btnYeudi" onclick="selectSys('yeudi')">⬜ יעודי</button>
   </div>
-  <button class="btn-send-all" id="btnSendAll" onclick="startQueue()">
-    📲 שלח לנבחרים
-  </button>
+  <button class="btn-send-all" id="btnSendAll" onclick="startSending()">📲 שלח לכולם</button>
 </div>
 
-<!-- QUEUE SCREEN -->
-<div id="queueScreen" class="hidden" style="width:100%;max-width:520px;padding:16px;">
+<!-- SENDING PAGE -->
+<div class="sending-page" id="page-sending">
+  <div id="sendingContent"></div>
 </div>
 
-<!-- UPLOAD SCREEN -->
-<div class="screen" id="screen-upload">
+<!-- UPLOAD PAGE -->
+<div class="page" id="page-upload">
   <div class="upload-box" onclick="document.getElementById('xlInput').click()">
     <div class="upload-icon">📊</div>
     <p>לחץ להעלאת קובץ אקסל</p>
@@ -294,37 +264,37 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs, writeBatch, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const firebaseConfig = {
+  const app = initializeApp({
     apiKey: "AIzaSyB96tJSuIsTpZXQKtBjQtfE3BC_3mKLXEg",
     authDomain: "hidos-4c0ee.firebaseapp.com",
     projectId: "hidos-4c0ee",
     storageBucket: "hidos-4c0ee.firebasestorage.app",
     messagingSenderId: "495592637500",
     appId: "1:495592637500:web:0c2b9c6b2093283bc96f39"
-  };
-  const app = initializeApp(firebaseConfig);
+  });
   const db = getFirestore(app);
   window._db = db;
   window._fs = { collection, getDocs, writeBatch, doc };
   window.loadContacts();
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
   let contacts = [];
-  let selected = new Set();
-  let currentSystem = null;
-  let queue = [];
-  let queueIndex = 0;
+  let sendQueue = [];
+  let currentSys = null;
+  let sendIndex = 0;
+  let foundContact = null;
 
-  function showScreen(name, btn) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  // ── NAV ──
+  function showPage(name, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById('screen-' + name).classList.add('active');
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('page-sending').classList.remove('active');
     btn.classList.add('active');
-    document.getElementById('actionBar').style.display = name === 'send' ? 'flex' : 'none';
-    document.getElementById('queueScreen').classList.add('hidden');
+    document.getElementById('actionBar').style.display = name === 'scan' ? 'flex' : 'none';
   }
 
   // ── LOAD CONTACTS ──
@@ -333,179 +303,271 @@
     try {
       const snap = await window._fs.getDocs(window._fs.collection(window._db, 'contacts'));
       contacts = snap.docs.map(d => d.data());
-      renderList();
       if (contacts.length > 0) {
         const s = document.getElementById('uploadStatus');
-        s.textContent = `✅ ${contacts.length} אנשי קשר במאגר`;
+        s.textContent = `✅ ${contacts.length} עובדים במאגר`;
         s.className = 'status-box success';
       }
     } catch(e) { console.error(e); }
   };
 
-  // ── RENDER LIST ──
-  function renderList() {
-    const q = document.getElementById('searchInput').value.trim().toLowerCase();
-    const filtered = contacts.filter(c =>
-      !q || c.firstName.includes(q) || c.lastName.includes(q) ||
-      (c.firstName + ' ' + c.lastName).includes(q)
-    );
-    const list = document.getElementById('contactList');
-    if (filtered.length === 0) {
-      list.innerHTML = '<div class="empty-state">לא נמצאו אנשי קשר</div>';
+  // ── PHOTO / OCR ──
+  window.handlePhoto = async function(input) {
+    const file = input.files[0];
+    if (!file) return;
+    input.value = '';
+    document.getElementById('loadingOcr').classList.remove('hidden');
+    document.getElementById('ocrBox').classList.add('hidden');
+    document.getElementById('warningBox').classList.add('hidden');
+    document.getElementById('searchResults').classList.add('hidden');
+    foundContact = null;
+
+    try {
+      const { data: { text } } = await Tesseract.recognize(file, 'heb+eng', { logger: () => {} });
+      document.getElementById('loadingOcr').classList.add('hidden');
+
+      // Check תת"ש
+      const tatashMatch = text.match(/תת["״״]?ש[^:\d]*[:\s]+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/);
+      if (tatashMatch) {
+        const parts = tatashMatch[1].split(/[\/\-.]/);
+        const tatashDate = new Date(
+          parseInt(parts[2]) < 100 ? 2000 + parseInt(parts[2]) : parseInt(parts[2]),
+          parseInt(parts[1]) - 1,
+          parseInt(parts[0])
+        );
+        const today = new Date(); today.setHours(0,0,0,0);
+        if (tatashDate > today) {
+          document.getElementById('warningBox').textContent = `⚠️ עובד זה עתיד לסיים שירות ב-${tatashMatch[1]} — לא נדרש חידוש`;
+          document.getElementById('warningBox').classList.remove('hidden');
+          return;
+        }
+      }
+
+      // Try to find in contacts
+      const cleanText = text.replace(/[^֐-׿\s]/g, ' ').replace(/\s+/g, ' ').trim();
+      let best = null, bestScore = 0;
+      for (const c of contacts) {
+        let score = 0;
+        if (cleanText.includes(c.firstName)) score += 2;
+        if (cleanText.includes(c.lastName)) score += 2;
+        if (score > bestScore) { bestScore = score; best = c; }
+      }
+
+      const ocrName = document.getElementById('ocrName');
+      const ocrStatus = document.getElementById('ocrStatus');
+
+      if (best && bestScore >= 2) {
+        foundContact = best;
+        ocrName.value = best.firstName + ' ' + best.lastName;
+        ocrStatus.innerHTML = `✅ זוהה במאגר: <span>${best.firstName} ${best.lastName} | ${best.phone}</span>`;
+        document.getElementById('btnAdd').disabled = false;
+      } else {
+        ocrName.value = cleanText.split('\n')[0].trim().substring(0, 40);
+        ocrStatus.innerHTML = `⚠️ לא נמצא במאגר — תקן את השם וחפש ידנית`;
+        document.getElementById('btnAdd').disabled = true;
+      }
+      document.getElementById('ocrBox').classList.remove('hidden');
+
+    } catch(e) {
+      document.getElementById('loadingOcr').classList.add('hidden');
+      alert('שגיאה בזיהוי תמונה — נסה שוב');
+    }
+  };
+
+  // ── ADD TO QUEUE ──
+  window.addToQueue = function() {
+    if (!foundContact) return;
+    if (sendQueue.find(c => c.phone === foundContact.phone)) {
+      alert(`${foundContact.firstName} ${foundContact.lastName} כבר ברשימה`);
       return;
     }
-    list.innerHTML = filtered.map((c, i) => {
-      const id = contacts.indexOf(c);
-      const isSel = selected.has(id);
-      return `
-        <div class="contact-item ${isSel ? 'selected' : ''}" onclick="toggleContact(${id})">
-          <div class="contact-checkbox">${isSel ? '✓' : ''}</div>
-          <div class="contact-info">
-            <div class="contact-name">${c.firstName} ${c.lastName}</div>
-            <div class="contact-phone">${c.phone}</div>
-          </div>
-        </div>`;
-    }).join('');
-    updateCount();
+    sendQueue.push(foundContact);
+    foundContact = null;
+    document.getElementById('ocrBox').classList.add('hidden');
+    document.getElementById('warningBox').classList.add('hidden');
+    renderQueue();
+    updateSendBtn();
+  };
+
+  // ── MANUAL SEARCH ──
+  window.onManualSearch = function() {
+    const q = document.getElementById('manualInput').value.trim();
+    const res = document.getElementById('searchResults');
+    if (q.length < 2) { res.classList.add('hidden'); return; }
+    const found = contacts.filter(c =>
+      c.firstName.includes(q) || c.lastName.includes(q) ||
+      (c.firstName + ' ' + c.lastName).includes(q)
+    ).slice(0, 6);
+    if (!found.length) { res.classList.add('hidden'); return; }
+    res.innerHTML = found.map(c => `
+      <div class="search-result-item" onclick="addManual('${c.phone}')">
+        <div>
+          <div style="font-weight:bold">${c.firstName} ${c.lastName}</div>
+          <div style="font-size:0.8rem;color:#888">${c.phone}</div>
+        </div>
+        <span style="color:#e2b96f;font-size:0.8rem">+ הוסף</span>
+      </div>`).join('');
+    res.classList.remove('hidden');
+  };
+
+  window.addManual = function(phone) {
+    const c = contacts.find(x => x.phone === phone);
+    if (!c) return;
+    if (sendQueue.find(x => x.phone === phone)) {
+      alert(`${c.firstName} ${c.lastName} כבר ברשימה`);
+      return;
+    }
+    sendQueue.push(c);
+    document.getElementById('manualInput').value = '';
+    document.getElementById('searchResults').classList.add('hidden');
+    renderQueue();
+    updateSendBtn();
+  };
+
+  // ── RENDER QUEUE ──
+  function renderQueue() {
+    const list = document.getElementById('queueList');
+    document.getElementById('queueCount').textContent = `${sendQueue.length} עובדים`;
+    if (!sendQueue.length) {
+      list.innerHTML = '<div class="empty-queue">צלם תמונה מהסאפ כדי להוסיף עובדים</div>';
+      return;
+    }
+    list.innerHTML = sendQueue.map((c, i) => `
+      <div class="queue-item">
+        <div>
+          <div class="queue-item-name">${c.firstName} ${c.lastName}</div>
+          <div class="queue-item-phone">${c.phone}</div>
+        </div>
+        <button class="btn-remove" onclick="removeFromQueue(${i})">✕</button>
+      </div>`).join('');
   }
 
-  function toggleContact(id) {
-    if (selected.has(id)) selected.delete(id);
-    else selected.add(id);
-    renderList();
-  }
+  window.removeFromQueue = function(i) {
+    sendQueue.splice(i, 1);
+    renderQueue();
+    updateSendBtn();
+  };
 
-  function toggleSelectAll() {
-    if (selected.size === contacts.length) selected.clear();
-    else contacts.forEach((_, i) => selected.add(i));
-    renderList();
-  }
+  // ── SYSTEM & SEND BTN ──
+  window.selectSys = function(sys) {
+    currentSys = sys;
+    document.getElementById('btnAtli').classList.toggle('active-sys', sys === 'atli');
+    document.getElementById('btnYeudi').classList.toggle('active-sys', sys === 'yeudi');
+    updateSendBtn();
+  };
 
-  function updateCount() {
-    document.getElementById('selectedCount').textContent = `${selected.size} נבחרו`;
-    const ready = selected.size > 0 && currentSystem;
+  function updateSendBtn() {
+    const ready = sendQueue.length > 0 && currentSys;
     document.getElementById('btnSendAll').classList.toggle('ready', ready);
   }
 
-  // ── SYSTEM ──
-  function selectSystem(sys) {
-    currentSystem = sys;
-    document.getElementById('btnAtli').classList.toggle('selected', sys === 'atli');
-    document.getElementById('btnYeudi').classList.toggle('selected', sys === 'yeudi');
-    updateCount();
-  }
-
-  // ── QUEUE ──
-  function startQueue() {
-    if (!selected.size || !currentSystem) return;
-    queue = Array.from(selected).map(i => contacts[i]);
-    queueIndex = 0;
-    document.getElementById('screen-send').classList.remove('active');
+  // ── SENDING FLOW ──
+  window.startSending = function() {
+    if (!sendQueue.length || !currentSys) return;
+    sendIndex = 0;
+    document.getElementById('page-scan').classList.remove('active');
     document.getElementById('actionBar').style.display = 'none';
-    document.getElementById('queueScreen').classList.remove('hidden');
-    renderQueue();
+    document.getElementById('page-sending').classList.add('active');
+    renderSendStep();
+  };
+
+  function buildMsg(c) {
+    const link = currentSys === 'atli'
+      ? 'https://kitbag.digital.idf.il/'
+      : 'https://navykitbag.prat.idf.il/login';
+    return `שלום ${c.firstName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג בקרוב.\nעל מנת להמשיך להחזיק את הציוד ברשותך, נדרש ממך לבצע חידוש חתימה בהקדם.\n\nלחץ על הקישור לחידוש החתימה:\n🔗 ${link}\n\nבברכה,\nצוות האפסנאות`;
   }
 
-  function renderQueue() {
-    const qs = document.getElementById('queueScreen');
-    if (queueIndex >= queue.length) {
-      qs.innerHTML = `
-        <div class="queue-done">
-          <div class="icon">✅</div>
+  function renderSendStep() {
+    const el = document.getElementById('sendingContent');
+    if (sendIndex >= sendQueue.length) {
+      el.innerHTML = `
+        <div class="done-screen">
+          <div class="done-icon">✅</div>
           <h2>הסתיים!</h2>
-          <p style="color:#aaa">נשלחו הודעות ל-${queue.length} אנשי קשר</p>
-          <button class="btn-back" onclick="backToMain()">חזור לרשימה</button>
+          <p style="color:#aaa">נשלחו הודעות ל-${sendQueue.length} עובדים</p>
+          <button class="btn-done" onclick="finishSending()">חזור לרשימה חדשה</button>
         </div>`;
       return;
     }
 
-    const c = queue[queueIndex];
-    const isAtli = currentSystem === 'atli';
-    const link = isAtli ? 'https://kitbag.digital.idf.il/' : 'https://navykitbag.prat.idf.il/login';
-    const msg = `שלום ${c.firstName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג בקרוב.\nעל מנת להמשיך להחזיק את הציוד ברשותך, נדרש ממך לבצע חידוש חתימה בהקדם.\n\nלחץ על הקישור לחידוש החתימה:\n🔗 ${link}\n\nבברכה,\nצוות האפסנאות`;
+    const c = sendQueue[sendIndex];
+    const isAtli = currentSys === 'atli';
+    const msg = buildMsg(c);
     const phone = c.phone.replace(/\D/g, '');
-    const intlPhone = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
-    const waUrl = `https://wa.me/${intlPhone}?text=${encodeURIComponent(msg)}`;
+    const intl = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
+    const waUrl = `https://wa.me/${intl}?text=${encodeURIComponent(msg)}`;
+    const nextName = sendIndex + 1 < sendQueue.length ? sendQueue[sendIndex + 1].firstName + ' ' + sendQueue[sendIndex + 1].lastName : 'סיום';
 
-    qs.innerHTML = `
-      <div style="text-align:center;margin-bottom:4px;">
-        <div class="queue-progress">${queueIndex + 1} מתוך ${queue.length}</div>
-        <div style="height:6px;background:#16213e;border-radius:4px;margin-top:8px;">
-          <div style="height:100%;width:${((queueIndex+1)/queue.length)*100}%;background:#e2b96f;border-radius:4px;transition:width 0.3s;"></div>
-        </div>
-      </div>
-      <div class="queue-card">
-        <div class="queue-system-badge ${isAtli ? 'badge-atli' : 'badge-yeudi'}">
-          ${isAtli ? '🟣 אטלי' : '⬜ יעודי'}
-        </div>
-        <div class="queue-name">${c.firstName} ${c.lastName}</div>
-        <div class="queue-phone">📞 ${c.phone}</div>
-        <div class="queue-msg-preview">${msg}</div>
-        <a href="${waUrl}" target="_blank" class="btn-open-wa" onclick="setTimeout(nextInQueue, 1500)">
+    el.innerHTML = `
+      <div class="progress-label">${sendIndex + 1} מתוך ${sendQueue.length}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${((sendIndex+1)/sendQueue.length)*100}%"></div></div>
+      <div class="send-card">
+        <div class="send-card-badge ${isAtli ? 'badge-atli' : 'badge-yeudi'}">${isAtli ? '🟣 אטלי' : '⬜ יעודי'}</div>
+        <div class="send-card-name">${c.firstName} ${c.lastName}</div>
+        <div class="send-card-phone">📞 ${c.phone}</div>
+        <div class="send-card-msg">${msg}</div>
+        <a href="${waUrl}" target="_blank" class="btn-open-wa" onclick="setTimeout(nextStep, 1200)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.523 5.855L.057 23.17a1 1 0 001.225 1.225l5.316-1.466A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.51-5.166-1.4l-.371-.22-3.846 1.06 1.06-3.846-.22-.371A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          פתח וואטסאפ לשליחה
+          פתח וואטסאפ → שלח → חזור
         </a>
-        <button class="btn-next" onclick="nextInQueue()">הבא ← ${queueIndex + 1 < queue.length ? queue[queueIndex+1].firstName + ' ' + queue[queueIndex+1].lastName : 'סיום'}</button>
-        <button class="btn-skip" onclick="nextInQueue()">דלג</button>
+        <button class="btn-next-contact" onclick="nextStep()">הבא ← ${nextName}</button>
+        <button class="btn-skip-contact" onclick="nextStep()">דלג על ${c.firstName}</button>
       </div>`;
   }
 
-  function nextInQueue() {
-    queueIndex++;
-    renderQueue();
-  }
+  window.nextStep = function() {
+    sendIndex++;
+    renderSendStep();
+  };
 
-  function backToMain() {
-    selected.clear();
-    currentSystem = null;
-    document.getElementById('btnAtli').classList.remove('selected');
-    document.getElementById('btnYeudi').classList.remove('selected');
-    document.getElementById('queueScreen').classList.add('hidden');
-    document.getElementById('screen-send').classList.add('active');
+  window.finishSending = function() {
+    sendQueue = [];
+    sendIndex = 0;
+    currentSys = null;
+    document.getElementById('btnAtli').classList.remove('active-sys');
+    document.getElementById('btnYeudi').classList.remove('active-sys');
+    document.getElementById('page-sending').classList.remove('active');
+    document.getElementById('page-scan').classList.add('active');
     document.getElementById('actionBar').style.display = 'flex';
-    updateCount();
-    renderList();
-  }
+    document.getElementById('navScan').classList.add('active');
+    document.getElementById('navUpload').classList.remove('active');
+    renderQueue();
+    updateSendBtn();
+  };
 
   // ── EXCEL ──
   window.handleExcel = async function(input) {
     const file = input.files[0];
     if (!file) return;
     const status = document.getElementById('uploadStatus');
-    status.textContent = 'מעבד קובץ...';
+    status.textContent = 'מעבד...';
     status.className = 'status-box';
     const data = await file.arrayBuffer();
     const wb = XLSX.read(data);
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-    const newContacts = [];
+    const newC = [];
     for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      if (!row || row.length < 2) continue;
-      const firstName = String(row[0] || '').trim();
-      const lastName = String(row[1] || '').trim();
-      const phone = String(row[2] || '').trim();
-      if (firstName && phone) newContacts.push({ firstName, lastName, phone });
+      const r = rows[i];
+      if (!r || r.length < 2) continue;
+      const firstName = String(r[0] || '').trim();
+      const lastName = String(r[1] || '').trim();
+      const phone = String(r[2] || '').trim();
+      if (firstName && phone) newC.push({ firstName, lastName, phone });
     }
-    if (newContacts.length === 0) {
-      status.textContent = '❌ לא נמצאו נתונים תקינים';
-      status.className = 'status-box error';
-      return;
-    }
+    if (!newC.length) { status.textContent = '❌ לא נמצאו נתונים'; status.className = 'status-box error'; return; }
     try {
       const { collection, getDocs, writeBatch, doc } = window._fs;
-      const db = window._db;
-      const existing = await getDocs(collection(db, 'contacts'));
-      const b1 = writeBatch(db);
+      const existing = await getDocs(collection(window._db, 'contacts'));
+      const b1 = writeBatch(window._db);
       existing.docs.forEach(d => b1.delete(d.ref));
       await b1.commit();
-      const b2 = writeBatch(db);
-      newContacts.forEach((c, i) => b2.set(doc(collection(db, 'contacts'), String(i)), c));
+      const b2 = writeBatch(window._db);
+      newC.forEach((c, i) => b2.set(doc(collection(window._db, 'contacts'), String(i)), c));
       await b2.commit();
-      contacts = newContacts;
-      selected.clear();
-      renderList();
-      status.textContent = `✅ הועלו ${contacts.length} אנשי קשר`;
+      contacts = newC;
+      status.textContent = `✅ הועלו ${contacts.length} עובדים`;
       status.className = 'status-box success';
     } catch(e) {
       status.textContent = '❌ שגיאה: ' + e.message;
