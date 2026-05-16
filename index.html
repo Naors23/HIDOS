@@ -8,7 +8,6 @@
   <meta name="theme-color" content="#1a1a2e" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #1a1a2e;
@@ -18,7 +17,6 @@
       flex-direction: column;
       align-items: center;
     }
-
     header {
       width: 100%;
       background: #16213e;
@@ -28,14 +26,8 @@
       justify-content: space-between;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-
     header h1 { font-size: 1.4rem; color: #e2b96f; }
-
-    nav {
-      display: flex;
-      gap: 10px;
-    }
-
+    nav { display: flex; gap: 10px; }
     nav button {
       background: transparent;
       border: 1px solid #444;
@@ -45,14 +37,12 @@
       cursor: pointer;
       font-size: 0.85rem;
     }
-
     nav button.active {
       background: #e2b96f;
       color: #1a1a2e;
       border-color: #e2b96f;
       font-weight: bold;
     }
-
     .screen {
       display: none;
       width: 100%;
@@ -62,10 +52,9 @@
       align-items: center;
       gap: 16px;
     }
-
     .screen.active { display: flex; }
 
-    /* ── UPLOAD SCREEN ── */
+    /* UPLOAD */
     .upload-box {
       width: 100%;
       border: 2px dashed #444;
@@ -75,12 +64,9 @@
       cursor: pointer;
       transition: border-color 0.2s;
     }
-
     .upload-box:hover { border-color: #e2b96f; }
     .upload-box p { color: #aaa; margin-top: 10px; font-size: 0.9rem; }
-
     .upload-icon { font-size: 3rem; }
-
     .status-box {
       width: 100%;
       background: #16213e;
@@ -90,12 +76,11 @@
       color: #aaa;
       text-align: center;
     }
-
     .status-box.success { color: #4caf50; border: 1px solid #4caf50; }
     .status-box.error { color: #f44336; border: 1px solid #f44336; }
 
-    /* ── SEND SCREEN ── */
-    .btn-primary {
+    /* SEND */
+    .btn-camera {
       width: 100%;
       padding: 16px;
       border: none;
@@ -103,16 +88,30 @@
       font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn-primary:hover { opacity: 0.85; }
-
-    .btn-camera {
       background: linear-gradient(135deg, #e2b96f, #c99a3e);
       color: #1a1a2e;
     }
-
+    .manual-input {
+      width: 100%;
+      background: #16213e;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .manual-input label { color: #aaa; font-size: 0.85rem; }
+    .manual-input input {
+      background: #1a1a2e;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 1rem;
+      width: 100%;
+      text-align: right;
+    }
+    .manual-input input:focus { outline: none; border-color: #e2b96f; }
     .result-card {
       width: 100%;
       background: #16213e;
@@ -122,96 +121,31 @@
       flex-direction: column;
       gap: 12px;
     }
-
     .result-card h3 { color: #e2b96f; font-size: 1rem; }
-
-    .result-name {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
+    .result-name { font-size: 1.4rem; font-weight: bold; }
     .result-phone { color: #aaa; font-size: 0.9rem; }
-
-    .system-btns {
-      display: flex;
-      gap: 12px;
-      width: 100%;
-    }
-
+    .system-btns { display: flex; gap: 12px; width: 100%; }
     .btn-atli {
-      flex: 1;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      background: linear-gradient(135deg, #7c5cbf, #5a3fa0);
-      color: #fff;
+      flex: 1; padding: 14px; border: none; border-radius: 14px;
+      font-size: 1rem; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #7c5cbf, #5a3fa0); color: #fff;
     }
-
     .btn-yeudi {
-      flex: 1;
-      padding: 14px;
-      border: none;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      background: linear-gradient(135deg, #1a3a5c, #0f2440);
-      color: #fff;
-      border: 2px solid #2a5a8c;
+      flex: 1; padding: 14px; border: 2px solid #2a5a8c; border-radius: 14px;
+      font-size: 1rem; font-weight: bold; cursor: pointer;
+      background: linear-gradient(135deg, #1a3a5c, #0f2440); color: #fff;
     }
-
     .btn-atli.selected { outline: 3px solid #fff; }
     .btn-yeudi.selected { outline: 3px solid #4fc3f7; }
 
-    .preview-card {
+    /* PREVIEW IMAGE */
+    .preview-wrapper {
       width: 100%;
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-
-    .preview-header-atli {
-      background: linear-gradient(135deg, #7c5cbf, #5a3fa0);
-      padding: 20px;
-      text-align: center;
-    }
-
-    .preview-header-yeudi {
-      background: linear-gradient(135deg, #1a3a5c, #0f2440);
-      padding: 20px;
-      text-align: center;
-      border-bottom: 3px solid #4fc3f7;
-    }
-
-    .preview-logo-atli {
-      font-size: 2rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 2px;
-    }
-
-    .preview-logo-yeudi {
-      font-size: 1.1rem;
-      color: #4fc3f7;
-      font-weight: bold;
-    }
-
-    .preview-logo-yeudi .big { font-size: 2.5rem; color: #fff; display: block; }
-
-    .preview-body {
-      background: #fff;
-      color: #222;
-      padding: 20px;
-      font-size: 1rem;
-      line-height: 1.7;
-      text-align: right;
-    }
-
-    .preview-body strong { color: #1a1a2e; }
+    .preview-wrapper canvas { width: 100%; display: block; }
 
     .btn-send {
       width: 100%;
@@ -228,49 +162,17 @@
       justify-content: center;
       gap: 10px;
     }
-
     .btn-send:hover { opacity: 0.85; }
-
-    .manual-input {
-      width: 100%;
-      background: #16213e;
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .manual-input label { color: #aaa; font-size: 0.85rem; }
-
-    .manual-input input {
-      background: #1a1a2e;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 10px 14px;
-      color: #fff;
-      font-size: 1rem;
-      width: 100%;
-      text-align: right;
-    }
-
-    .manual-input input:focus {
-      outline: none;
-      border-color: #e2b96f;
-    }
-
-    .btn-search {
+    .btn-download {
       width: 100%;
       padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: bold;
+      border: 1px solid #444;
+      border-radius: 14px;
+      font-size: 0.95rem;
       cursor: pointer;
-      background: #e2b96f;
-      color: #1a1a2e;
+      background: transparent;
+      color: #aaa;
     }
-
     .ocr-result {
       width: 100%;
       background: #0f2440;
@@ -280,9 +182,7 @@
       color: #aaa;
       border: 1px solid #2a5a8c;
     }
-
     .ocr-result span { color: #fff; font-weight: bold; }
-
     .warning-box {
       width: 100%;
       background: #3a1a1a;
@@ -292,20 +192,9 @@
       color: #f44336;
       font-weight: bold;
       text-align: center;
-      font-size: 0.95rem;
     }
-
+    .loading { color: #e2b96f; font-size: 0.9rem; text-align: center; padding: 10px; }
     .hidden { display: none !important; }
-
-    canvas { display: none; }
-
-    .loading {
-      color: #e2b96f;
-      font-size: 0.9rem;
-      text-align: center;
-      padding: 10px;
-    }
-
     .divider {
       width: 100%;
       text-align: center;
@@ -313,7 +202,6 @@
       font-size: 0.8rem;
       position: relative;
     }
-
     .divider::before, .divider::after {
       content: '';
       position: absolute;
@@ -322,7 +210,6 @@
       height: 1px;
       background: #333;
     }
-
     .divider::before { right: 0; }
     .divider::after { left: 0; }
   </style>
@@ -332,8 +219,8 @@
 <header>
   <h1>HIDOS</h1>
   <nav>
-    <button class="active" onclick="showScreen('send')">שליחה</button>
-    <button onclick="showScreen('upload')">מאגר נתונים</button>
+    <button class="active" onclick="showScreen('send', this)">שליחה</button>
+    <button onclick="showScreen('upload', this)">מאגר נתונים</button>
   </nav>
 </header>
 
@@ -347,14 +234,13 @@
 
   <div class="divider">או</div>
 
-  <button class="btn-primary btn-camera" onclick="document.getElementById('cameraInput').click()">
+  <button class="btn-camera" onclick="document.getElementById('cameraInput').click()">
     📷 צלם תמונה מה-SAP
   </button>
   <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)" />
 
-  <div id="ocrResult" class="ocr-result hidden"></div>
   <div id="loadingOcr" class="loading hidden">מזהה טקסט מהתמונה...</div>
-
+  <div id="ocrResult" class="ocr-result hidden"></div>
   <div id="warningBox" class="warning-box hidden"></div>
 
   <div id="resultCard" class="result-card hidden">
@@ -367,12 +253,15 @@
     </div>
   </div>
 
-  <div id="previewCard" class="preview-card hidden"></div>
+  <div id="previewWrapper" class="preview-wrapper hidden">
+    <canvas id="previewCanvas"></canvas>
+  </div>
 
   <button id="btnSend" class="btn-send hidden" onclick="sendWhatsapp()">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.523 5.855L.057 23.17a1 1 0 001.225 1.225l5.316-1.466A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.51-5.166-1.4l-.371-.22-3.846 1.06 1.06-3.846-.22-.371A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
     שלח לוואטסאפ
   </button>
+  <button id="btnDownload" class="btn-download hidden" onclick="downloadImage()">⬇️ הורד תמונה</button>
 
 </div>
 
@@ -381,18 +270,16 @@
   <div class="upload-box" onclick="document.getElementById('xlInput').click()">
     <div class="upload-icon">📊</div>
     <p>לחץ להעלאת קובץ אקסל</p>
-    <p style="font-size:0.75rem; margin-top:6px;">קובץ XLS / XLSX עם עמודות: שם, שם משפחה, טלפון</p>
+    <p style="font-size:0.75rem; margin-top:6px;">עמודות: שם פרטי | שם משפחה | טלפון</p>
     <input type="file" id="xlInput" accept=".xlsx,.xls" style="display:none" onchange="handleExcel(this)" />
   </div>
   <div id="uploadStatus" class="status-box">לא הועלה קובץ עדיין</div>
 </div>
 
-<canvas id="canvas"></canvas>
-
 <!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, writeBatch, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, writeBatch, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB96tJSuIsTpZXQKtBjQtfE3BC_3mKLXEg",
@@ -405,18 +292,12 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-
   window._db = db;
-  window._firestoreFns = { collection, getDocs, writeBatch, doc, deleteDoc, setDoc };
-
-  // Load contacts on start
+  window._fs = { collection, getDocs, writeBatch, doc };
   window.loadContacts();
 </script>
 
-<!-- SheetJS for Excel parsing -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-<!-- Tesseract OCR -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
@@ -424,28 +305,25 @@
   let currentContact = null;
   let currentSystem = null;
 
-  function showScreen(name) {
+  function showScreen(name, btn) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
     document.getElementById('screen-' + name).classList.add('active');
-    event.target.classList.add('active');
+    btn.classList.add('active');
   }
 
-  // ── CONTACTS ──
+  // ── LOAD CONTACTS ──
   window.loadContacts = async function() {
     if (!window._db) return;
-    const { collection, getDocs } = window._firestoreFns;
     try {
-      const snap = await getDocs(collection(window._db, 'contacts'));
+      const snap = await window._fs.getDocs(window._fs.collection(window._db, 'contacts'));
       contacts = snap.docs.map(d => d.data());
-      const status = document.getElementById('uploadStatus');
       if (contacts.length > 0) {
-        status.textContent = `✅ ${contacts.length} אנשי קשר במאגר`;
-        status.className = 'status-box success';
+        const s = document.getElementById('uploadStatus');
+        s.textContent = `✅ ${contacts.length} אנשי קשר במאגר`;
+        s.className = 'status-box success';
       }
-    } catch(e) {
-      console.error(e);
-    }
+    } catch(e) { console.error(e); }
   };
 
   // ── EXCEL UPLOAD ──
@@ -464,45 +342,36 @@
     const newContacts = [];
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
-      if (!row || row.length < 3) continue;
+      if (!row || row.length < 2) continue;
       const firstName = String(row[0] || '').trim();
       const lastName = String(row[1] || '').trim();
       const phone = String(row[2] || '').trim();
-      if (firstName && phone) {
-        newContacts.push({ firstName, lastName, phone });
-      }
+      if (firstName && phone) newContacts.push({ firstName, lastName, phone });
     }
 
     if (newContacts.length === 0) {
-      status.textContent = '❌ לא נמצאו נתונים תקינים בקובץ';
+      status.textContent = '❌ לא נמצאו נתונים תקינים';
       status.className = 'status-box error';
       return;
     }
 
-    // Save to Firebase
-    const { collection, getDocs, writeBatch, doc, deleteDoc } = window._firestoreFns;
-    const db = window._db;
-
     try {
-      // Delete old
+      const { collection, getDocs, writeBatch, doc } = window._fs;
+      const db = window._db;
       const existing = await getDocs(collection(db, 'contacts'));
-      const batch = writeBatch(db);
-      existing.docs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
+      const b1 = writeBatch(db);
+      existing.docs.forEach(d => b1.delete(d.ref));
+      await b1.commit();
 
-      // Add new
-      const batch2 = writeBatch(db);
-      newContacts.forEach((c, i) => {
-        const ref = doc(collection(db, 'contacts'), String(i));
-        batch2.set(ref, c);
-      });
-      await batch2.commit();
+      const b2 = writeBatch(db);
+      newContacts.forEach((c, i) => b2.set(doc(collection(db, 'contacts'), String(i)), c));
+      await b2.commit();
 
       contacts = newContacts;
-      status.textContent = `✅ הועלו ${contacts.length} אנשי קשר בהצלחה`;
+      status.textContent = `✅ הועלו ${contacts.length} אנשי קשר`;
       status.className = 'status-box success';
     } catch(e) {
-      status.textContent = '❌ שגיאה בשמירה: ' + e.message;
+      status.textContent = '❌ שגיאה: ' + e.message;
       status.className = 'status-box error';
     }
   };
@@ -510,14 +379,10 @@
   // ── SEARCH ──
   window.onSearchInput = function() {
     const q = document.getElementById('searchInput').value.trim();
-    if (q.length < 2) {
-      hideResult();
-      return;
-    }
+    if (q.length < 2) { hideResult(); return; }
     const found = contacts.find(c =>
-      (c.firstName + ' ' + c.lastName).includes(q) ||
-      c.firstName.includes(q) ||
-      c.lastName.includes(q)
+      c.firstName.includes(q) || c.lastName.includes(q) ||
+      (c.firstName + ' ' + c.lastName).includes(q)
     );
     if (found) showResult(found);
     else hideResult();
@@ -527,52 +392,46 @@
   window.handlePhoto = async function(input) {
     const file = input.files[0];
     if (!file) return;
-
     document.getElementById('loadingOcr').classList.remove('hidden');
     document.getElementById('ocrResult').classList.add('hidden');
-    hideResult();
-    hideWarning();
+    hideResult(); hideWarning();
 
     try {
-      const { data: { text } } = await Tesseract.recognize(file, 'heb+eng', {
-        logger: () => {}
-      });
-
+      const { data: { text } } = await Tesseract.recognize(file, 'heb+eng', { logger: () => {} });
       document.getElementById('loadingOcr').classList.add('hidden');
 
-      // Check for תת"ש
-      const tatashMatch = text.match(/תת["״]?ש[^:]*[:\s]+(\d{1,2}\/\d{1,2}\/\d{2,4})/);
+      const tatashMatch = text.match(/תת["״״]?ש[^:\d]*[:\s]+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/);
       if (tatashMatch) {
         const dateStr = tatashMatch[1];
-        const [d, m, y] = dateStr.split('/').map(Number);
+        const parts = dateStr.split(/[\/\-.]/);
+        const d = parseInt(parts[0]), m = parseInt(parts[1]);
+        const y = parseInt(parts[2]);
         const year = y < 100 ? 2000 + y : y;
         const tatashDate = new Date(year, m - 1, d);
-        const today = new Date();
-        today.setHours(0,0,0,0);
+        const today = new Date(); today.setHours(0,0,0,0);
         if (tatashDate > today) {
-          showWarning(`לקוח זה עתיד לסיים שירות ב-${dateStr} — לא נדרש חידוש השאלה`);
-          showOcrText(text);
+          showWarning(`לקוח עתיד לסיים שירות ב-${dateStr} — לא נדרש חידוש השאלה`);
           return;
         }
       }
 
-      showOcrText(text);
+      const lines = text.split('\n').filter(l => l.trim().length > 1).slice(0, 3).join(' | ');
+      const el = document.getElementById('ocrResult');
+      el.innerHTML = `טקסט מזוהה: <span>${lines}</span>`;
+      el.classList.remove('hidden');
 
-      // Try to find name in contacts
-      let bestMatch = null;
-      let bestScore = 0;
+      let bestMatch = null, bestScore = 0;
       for (const c of contacts) {
-        const fullName = c.firstName + ' ' + c.lastName;
-        if (text.includes(c.firstName) || text.includes(c.lastName) || text.includes(fullName)) {
-          const score = (text.includes(fullName) ? 2 : 1);
-          if (score > bestScore) { bestScore = score; bestMatch = c; }
-        }
+        let score = 0;
+        if (text.includes(c.firstName)) score++;
+        if (text.includes(c.lastName)) score++;
+        if ((c.firstName + ' ' + c.lastName).split('').every(ch => text.includes(ch))) score++;
+        if (score > bestScore) { bestScore = score; bestMatch = c; }
       }
 
-      if (bestMatch) showResult(bestMatch);
+      if (bestMatch && bestScore > 0) showResult(bestMatch);
       else {
-        document.getElementById('ocrResult').innerHTML = '<span style="color:#f44336">לא זוהה לקוח במאגר — נסה חיפוש ידני</span>';
-        document.getElementById('ocrResult').classList.remove('hidden');
+        el.innerHTML += '<br><span style="color:#f44336">לא זוהה לקוח — נסה חיפוש ידני</span>';
       }
     } catch(e) {
       document.getElementById('loadingOcr').classList.add('hidden');
@@ -580,13 +439,6 @@
       document.getElementById('ocrResult').classList.remove('hidden');
     }
   };
-
-  function showOcrText(text) {
-    const lines = text.split('\n').filter(l => l.trim().length > 2).slice(0, 4).join(' | ');
-    const el = document.getElementById('ocrResult');
-    el.innerHTML = `טקסט מזוהה: <span>${lines}</span>`;
-    el.classList.remove('hidden');
-  }
 
   // ── RESULT ──
   function showResult(contact) {
@@ -597,16 +449,17 @@
     document.getElementById('resultCard').classList.remove('hidden');
     document.getElementById('btnAtli').classList.remove('selected');
     document.getElementById('btnYeudi').classList.remove('selected');
-    document.getElementById('previewCard').classList.add('hidden');
+    document.getElementById('previewWrapper').classList.add('hidden');
     document.getElementById('btnSend').classList.add('hidden');
+    document.getElementById('btnDownload').classList.add('hidden');
   }
 
   function hideResult() {
-    currentContact = null;
-    currentSystem = null;
+    currentContact = null; currentSystem = null;
     document.getElementById('resultCard').classList.add('hidden');
-    document.getElementById('previewCard').classList.add('hidden');
+    document.getElementById('previewWrapper').classList.add('hidden');
     document.getElementById('btnSend').classList.add('hidden');
+    document.getElementById('btnDownload').classList.add('hidden');
   }
 
   function showWarning(msg) {
@@ -614,53 +467,173 @@
     el.textContent = '⚠️ ' + msg;
     el.classList.remove('hidden');
   }
-
-  function hideWarning() {
-    document.getElementById('warningBox').classList.add('hidden');
-  }
+  function hideWarning() { document.getElementById('warningBox').classList.add('hidden'); }
 
   // ── SYSTEM SELECTION ──
   window.selectSystem = function(system) {
     if (!currentContact) return;
     currentSystem = system;
-
     document.getElementById('btnAtli').classList.toggle('selected', system === 'atli');
     document.getElementById('btnYeudi').classList.toggle('selected', system === 'yeudi');
-
-    renderPreview();
+    generateImage();
     document.getElementById('btnSend').classList.remove('hidden');
+    document.getElementById('btnDownload').classList.remove('hidden');
   };
 
-  function renderPreview() {
+  // ── GENERATE IMAGE ──
+  function generateImage() {
+    const canvas = document.getElementById('previewCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = 800, H = 900;
+    canvas.width = W; canvas.height = H;
+
     const name = currentContact.firstName + ' ' + currentContact.lastName;
     const isAtli = currentSystem === 'atli';
-    const link = isAtli
-      ? 'https://kitbag.digital.idf.il/'
-      : 'https://navykitbag.prat.idf.il/login';
+    const link = isAtli ? 'https://kitbag.digital.idf.il/' : 'https://navykitbag.prat.idf.il/login';
 
-    const headerClass = isAtli ? 'preview-header-atli' : 'preview-header-yeudi';
-    const logoHtml = isAtli
-      ? `<div class="preview-logo-atli">קיטבג</div>`
-      : `<div class="preview-logo-yeudi"><span class="big">קל</span>קיטבג לבן</div>`;
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    if (isAtli) {
+      grad.addColorStop(0, '#7c5cbf');
+      grad.addColorStop(1, '#3a1f7a');
+    } else {
+      grad.addColorStop(0, '#1a3a5c');
+      grad.addColorStop(1, '#0a1a2e');
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
 
-    const msg = `שלום ${name},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג.\nנא להיכנס לקישור המצורף ולבצע חידוש חתימה בהקדם.\n\n🔗 ${link}\n\nבתודה, צוות האפסנאות`;
+    // White card in center
+    const cardX = 40, cardY = 200, cardW = W - 80, cardH = 560;
+    ctx.fillStyle = 'rgba(255,255,255,0.97)';
+    roundRect(ctx, cardX, cardY, cardW, cardH, 24);
+    ctx.fill();
 
-    document.getElementById('previewCard').innerHTML = `
-      <div class="${headerClass}">${logoHtml}</div>
-      <div class="preview-body" style="white-space:pre-line">${msg}</div>
-    `;
-    document.getElementById('previewCard').classList.remove('hidden');
+    // Logo area (top of background)
+    ctx.textAlign = 'center';
+    ctx.direction = 'rtl';
 
-    window._currentMsg = msg;
+    if (isAtli) {
+      // קיטבג logo
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 72px Arial';
+      ctx.fillText('קיטבג', W / 2, 130);
+      ctx.font = '22px Arial';
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.fillText('מערכת אטלי', W / 2, 170);
+    } else {
+      // קל קיטבג לבן logo
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 80px Arial';
+      ctx.fillText('קל', W / 2, 120);
+      ctx.font = 'bold 26px Arial';
+      ctx.fillStyle = '#4fc3f7';
+      ctx.fillText('קיטבג לבן', W / 2, 165);
+    }
+
+    // Card content
+    const cx = W / 2;
+
+    // Greeting
+    ctx.fillStyle = '#444';
+    ctx.font = '24px Arial';
+    ctx.fillText('שלום,', cx, cardY + 60);
+
+    // Name
+    ctx.fillStyle = isAtli ? '#5a3fa0' : '#0f2440';
+    ctx.font = 'bold 52px Arial';
+    ctx.fillText(name, cx, cardY + 130);
+
+    // Divider line
+    ctx.strokeStyle = isAtli ? '#7c5cbf' : '#1a3a5c';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cardX + 60, cardY + 155);
+    ctx.lineTo(cardX + cardW - 60, cardY + 155);
+    ctx.stroke();
+
+    // Message text
+    ctx.fillStyle = '#333';
+    ctx.font = '26px Arial';
+    const lines = [
+      'חתימת ההשאלה שלך על הציוד',
+      'עומדת לפוג.',
+      '',
+      'נא להיכנס לקישור המצורף',
+      'ולבצע חידוש חתימה בהקדם.'
+    ];
+    let y = cardY + 220;
+    for (const line of lines) {
+      if (line) ctx.fillText(line, cx, y);
+      y += 44;
+    }
+
+    // Link box
+    const linkBoxY = cardY + 420;
+    ctx.fillStyle = isAtli ? '#7c5cbf' : '#1a3a5c';
+    roundRect(ctx, cardX + 40, linkBoxY, cardW - 80, 60, 12);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 20px Arial';
+    ctx.fillText('לחץ כאן לחידוש החתימה 🔗', cx, linkBoxY + 36);
+
+    // Footer
+    ctx.fillStyle = '#888';
+    ctx.font = '20px Arial';
+    ctx.fillText('בתודה, צוות האפסנאות', cx, cardY + cardH - 30);
+
+    document.getElementById('previewWrapper').classList.remove('hidden');
+    window._currentLink = link;
     window._currentPhone = currentContact.phone;
+    window._currentName = name;
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
   }
 
   // ── SEND WHATSAPP ──
-  window.sendWhatsapp = function() {
+  window.sendWhatsapp = async function() {
     const phone = window._currentPhone.replace(/\D/g, '');
     const intlPhone = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
-    const msg = encodeURIComponent(window._currentMsg);
+    const text = `שלום ${window._currentName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג.\nנא להיכנס לקישור המצורף ולבצע חידוש חתימה בהקדם.\n\n🔗 ${window._currentLink}\n\nבתודה, צוות האפסנאות`;
+
+    const canvas = document.getElementById('previewCanvas');
+
+    // Try Web Share API (mobile)
+    if (navigator.canShare) {
+      try {
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+        const file = new File([blob], 'kitbag.png', { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text });
+          return;
+        }
+      } catch(e) { /* fallback */ }
+    }
+
+    // Desktop fallback: open WhatsApp web with text
+    const msg = encodeURIComponent(text);
     window.open(`https://wa.me/${intlPhone}?text=${msg}`, '_blank');
+  };
+
+  // ── DOWNLOAD IMAGE ──
+  window.downloadImage = function() {
+    const canvas = document.getElementById('previewCanvas');
+    const a = document.createElement('a');
+    a.download = `kitbag_${window._currentName}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
   };
 </script>
 </body>
