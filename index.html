@@ -603,28 +603,19 @@
   }
 
   // ── SEND WHATSAPP ──
-  window.sendWhatsapp = async function() {
+  window.sendWhatsapp = function() {
     const phone = window._currentPhone.replace(/\D/g, '');
     const intlPhone = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
     const text = `שלום ${window._currentName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג.\nנא להיכנס לקישור המצורף ולבצע חידוש חתימה בהקדם.\n\n🔗 ${window._currentLink}\n\nבתודה, צוות האפסנאות`;
-
-    const canvas = document.getElementById('previewCanvas');
-
-    // Try Web Share API (mobile)
-    if (navigator.canShare) {
-      try {
-        const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-        const file = new File([blob], 'kitbag.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], text });
-          return;
-        }
-      } catch(e) { /* fallback */ }
-    }
-
-    // Desktop fallback: open WhatsApp web with text
     const msg = encodeURIComponent(text);
-    window.open(`https://wa.me/${intlPhone}?text=${msg}`, '_blank');
+
+    // הורד תמונה אוטומטית
+    downloadImage();
+
+    // פתח וואטסאפ ישירות עם הטקסט
+    setTimeout(() => {
+      window.open(`https://wa.me/${intlPhone}?text=${msg}`, '_blank');
+    }, 500);
   };
 
   // ── DOWNLOAD IMAGE ──
