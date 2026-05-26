@@ -252,6 +252,7 @@
   <div class="system-btns">
     <button class="btn-atli" id="btnAtli" onclick="selectSys('atli')">🟣 אטלי</button>
     <button class="btn-yeudi" id="btnYeudi" onclick="selectSys('yeudi')">⬜ יעודי</button>
+    <button class="btn-free" id="btnMadim" onclick="selectSys('madim')">👕 מדים</button>
     <button class="btn-free" id="btnFree" onclick="selectSys('free')">✏️ חופשי</button>
   </div>
   <div id="freeTextBox" style="display:none;width:100%;">
@@ -473,6 +474,7 @@
     currentSys = sys;
     document.getElementById('btnAtli').classList.toggle('active-sys', sys === 'atli');
     document.getElementById('btnYeudi').classList.toggle('active-sys', sys === 'yeudi');
+    document.getElementById('btnMadim').classList.toggle('active-sys', sys === 'madim');
     document.getElementById('btnFree').classList.toggle('active-sys', sys === 'free');
     document.getElementById('freeTextBox').style.display = sys === 'free' ? 'block' : 'none';
     updateSendBtn();
@@ -497,6 +499,9 @@
   function buildMsg(c) {
     if (currentSys === 'free') {
       return document.getElementById('freeText').value.trim();
+    }
+    if (currentSys === 'madim') {
+      return `שלום ${c.firstName} ${c.lastName},\nהמדי לחימה שלך הגיעו 👕, אנא גש לאפסנאות הפלגה לחתום על הציוד ✍️\n\nבברכה,\nצוות אפסנאות 916`;
     }
     const link = currentSys === 'atli'
       ? 'https://kitbag.digital.idf.il/'
@@ -529,7 +534,7 @@
       <div class="progress-label">${sendIndex + 1} מתוך ${sendQueue.length}</div>
       <div class="progress-bar-wrap"><div class="progress-bar" style="width:${((sendIndex+1)/sendQueue.length)*100}%"></div></div>
       <div class="send-card">
-        <div class="send-card-badge ${currentSys === 'atli' ? 'badge-atli' : currentSys === 'yeudi' ? 'badge-yeudi' : ''}" style="${currentSys === 'free' ? 'background:#2a2a3e;color:#e2b96f;border:1px solid #e2b96f;' : ''}">${currentSys === 'atli' ? '🟣 אטלי' : currentSys === 'yeudi' ? '⬜ יעודי' : '✏️ הודעה חופשית'}</div>
+        <div class="send-card-badge ${currentSys === 'atli' ? 'badge-atli' : currentSys === 'yeudi' ? 'badge-yeudi' : ''}" style="${currentSys === 'free' ? 'background:#2a2a3e;color:#e2b96f;border:1px solid #e2b96f;' : ''}">${currentSys === 'atli' ? '🟣 אטלי' : currentSys === 'yeudi' ? '⬜ יעודי' : currentSys === 'madim' ? '👕 מדים' : '✏️ הודעה חופשית'}</div>
         <div class="send-card-name">${c.firstName} ${c.lastName}</div>
         <div class="send-card-phone">📞 ${c.phone}</div>
         <div class="send-card-msg">${msg}</div>
