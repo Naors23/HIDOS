@@ -124,8 +124,14 @@
       font-size: 0.95rem; font-weight: bold; cursor: pointer;
       background: linear-gradient(135deg, #1a3a5c, #0f2440); color: #fff;
     }
+    .btn-free {
+      flex: 1; padding: 12px; border: 2px solid #555; border-radius: 12px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer;
+      background: #2a2a3e; color: #fff;
+    }
     .btn-atli.active-sys { border-color: #fff; }
     .btn-yeudi.active-sys { border-color: #4fc3f7; }
+    .btn-free.active-sys { border-color: #e2b96f; color: #e2b96f; }
     .btn-send-all {
       width: 100%; padding: 14px; border: none; border-radius: 12px;
       font-size: 1.05rem; font-weight: bold; cursor: pointer;
@@ -246,6 +252,10 @@
   <div class="system-btns">
     <button class="btn-atli" id="btnAtli" onclick="selectSys('atli')">🟣 אטלי</button>
     <button class="btn-yeudi" id="btnYeudi" onclick="selectSys('yeudi')">⬜ יעודי</button>
+    <button class="btn-free" id="btnFree" onclick="selectSys('free')">✏️ חופשי</button>
+  </div>
+  <div id="freeTextBox" style="display:none;width:100%;">
+    <textarea id="freeText" placeholder="כתוב כאן את ההודעה החופשית..." style="width:100%;height:90px;background:#1a1a2e;border:1px solid #e2b96f;border-radius:10px;padding:10px;color:#fff;font-size:0.95rem;resize:none;font-family:Arial;direction:rtl;"></textarea>
   </div>
   <button class="btn-send-all" id="btnSendAll" onclick="startSending()">📲 שלח לכולם</button>
 </div>
@@ -463,11 +473,14 @@
     currentSys = sys;
     document.getElementById('btnAtli').classList.toggle('active-sys', sys === 'atli');
     document.getElementById('btnYeudi').classList.toggle('active-sys', sys === 'yeudi');
+    document.getElementById('btnFree').classList.toggle('active-sys', sys === 'free');
+    document.getElementById('freeTextBox').style.display = sys === 'free' ? 'block' : 'none';
     updateSendBtn();
   };
 
   function updateSendBtn() {
-    const ready = sendQueue.length > 0 && currentSys;
+    const freeOk = currentSys !== 'free' || document.getElementById('freeText').value.trim().length > 0;
+    const ready = sendQueue.length > 0 && currentSys && freeOk;
     document.getElementById('btnSendAll').classList.toggle('ready', ready);
   }
 
@@ -482,6 +495,9 @@
   };
 
   function buildMsg(c) {
+    if (currentSys === 'free') {
+      return document.getElementById('freeText').value.trim();
+    }
     const link = currentSys === 'atli'
       ? 'https://kitbag.digital.idf.il/'
       : 'https://navykitbag.prat.idf.il/login';
