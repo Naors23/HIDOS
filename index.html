@@ -780,6 +780,11 @@
     if (!newC.length) { status.textContent = '❌ לא נמצאו נתונים'; status.className = 'status-box error'; return; }
     try {
       const { collection, getDocs, writeBatch, doc } = window._fs;
+
+      // מספרי טלפון מהאקסל החדש
+      const excelPhones = new Set(newC.map(c => c.phone.replace(/\D/g,'')));
+
+      // מחק ומלא מחדש את contacts
       const existing = await getDocs(collection(window._db, 'contacts'));
       const b1 = writeBatch(window._db);
       existing.docs.forEach(d => b1.delete(d.ref));
@@ -787,9 +792,19 @@
       const b2 = writeBatch(window._db);
       newC.forEach((c, i) => b2.set(doc(collection(window._db, 'contacts'), String(i)), c));
       await b2.commit();
-      contacts = newC;
-      status.textContent = `✅ הועלו ${contacts.length} עובדים`;
+
+      // מחק מ-manual_contacts רק כפילויות לפי טלפון
+      const manualSnap = await getDocs(collection(window._db, 'manual_contacts'));
+      const dups = manualSnap.docs.filter(d => excelPhones.has(d.data().phone.replace(/\D/g,'')));
+      if (dups.length) {
+        const b3 = writeBatch(window._db);
+        dups.forEach(d => b3.delete(d.ref));
+        await b3.commit();
+      }
+
+      status.textContent = `✅ הועלו ${newC.length} עובדים${dups.length ? ` | הוסרו ${dups.length} כפילויות ידניות` : ''}`;
       status.className = 'status-box success';
+      window.loadContacts();
     } catch(e) {
       status.textContent = '❌ שגיאה: ' + e.message;
       status.className = 'status-box error';
