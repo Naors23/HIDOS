@@ -8,6 +8,10 @@
   <meta name="theme-color" content="#1a1a2e" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #1a1a2e;
@@ -302,11 +306,11 @@
   <!-- Manual Contact Add -->
   <div style="background:#16213e;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;">
     <div style="color:#e2b96f;font-weight:bold;font-size:0.95rem;">➕ הוספת איש קשר ידנית</div>
-    <div style="display:flex;gap:8px;">
-      <input type="text" id="manualFirst" placeholder="שם פרטי" style="flex:1;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
-      <input type="text" id="manualLast" placeholder="שם משפחה" style="flex:1;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
+    <div style="display:flex;gap:8px;width:100%;min-width:0;">
+      <input type="text" id="manualFirst" placeholder="שם פרטי" style="flex:1;min-width:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
+      <input type="text" id="manualLast" placeholder="שם משפחה" style="flex:1;min-width:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
     </div>
-    <input type="tel" id="manualPhone" placeholder="מספר טלפון" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;width:100%;" />
+    <input type="tel" id="manualPhone" placeholder="מספר טלפון" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;width:100%;min-width:0;" />
     <button onclick="saveManualContact()" style="background:#e2b96f;color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-size:0.95rem;font-weight:bold;cursor:pointer;">שמור איש קשר</button>
     <div id="manualSaveStatus" style="display:none;font-size:0.85rem;text-align:center;"></div>
   </div>
