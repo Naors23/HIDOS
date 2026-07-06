@@ -43,36 +43,6 @@
     .page.active { display: flex; }
 
     /* ── SCAN PAGE ── */
-    .btn-camera {
-      width: 100%; padding: 18px; border: none; border-radius: 14px;
-      font-size: 1.1rem; font-weight: bold; cursor: pointer;
-      background: linear-gradient(135deg, #e2b96f, #c99a3e); color: #1a1a2e;
-    }
-    .ocr-box {
-      background: #16213e; border-radius: 14px; padding: 16px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .ocr-box label { color: #aaa; font-size: 0.8rem; }
-    .ocr-box input {
-      background: #1a1a2e; border: 1px solid #444; border-radius: 8px;
-      padding: 10px 14px; color: #fff; font-size: 1rem; width: 100%; text-align: right;
-    }
-    .ocr-box input:focus { outline: none; border-color: #e2b96f; }
-    .ocr-result-text { font-size: 0.85rem; color: #aaa; }
-    .ocr-result-text span { color: #e2b96f; }
-    .btn-add {
-      width: 100%; padding: 12px; border: none; border-radius: 10px;
-      font-size: 1rem; font-weight: bold; cursor: pointer;
-      background: #2a5a3a; color: #4caf50; border: 1px solid #4caf50;
-    }
-    .btn-add:disabled { opacity: 0.3; cursor: default; }
-
-    .divider { text-align: center; color: #444; font-size: 0.8rem; position: relative; }
-    .divider::before, .divider::after {
-      content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: #333;
-    }
-    .divider::before { right: 0; } .divider::after { left: 0; }
-
     .manual-search { display: flex; gap: 8px; }
     .manual-search input {
       flex: 1; background: #16213e; border: 1px solid #333; border-radius: 10px;
@@ -250,7 +220,7 @@
     <span id="queueCount">0 עובדים</span>
   </div>
   <div id="queueList" class="queue-list">
-    <div class="empty-queue">צלם תמונה מהסאפ כדי להוסיף עובדים</div>
+    <div class="empty-queue">חפש שם למעלה כדי להוסיף עובדים לרשימה</div>
   </div>
 </div>
 
@@ -263,7 +233,7 @@
     <button class="btn-free" id="btnFree" onclick="selectSys('free')">✏️ חופשי</button>
   </div>
   <div id="freeTextBox" style="display:none;width:100%;">
-    <textarea id="freeText" placeholder="כתוב כאן את ההודעה החופשית..." style="width:100%;height:90px;background:#1a1a2e;border:1px solid #e2b96f;border-radius:10px;padding:10px;color:#fff;font-size:0.95rem;resize:none;font-family:Arial;direction:rtl;"></textarea>
+    <textarea id="freeText" oninput="updateSendBtn()" placeholder="כתוב כאן את ההודעה החופשית..." style="width:100%;height:90px;background:#1a1a2e;border:1px solid #e2b96f;border-radius:10px;padding:10px;color:#fff;font-size:0.95rem;resize:none;font-family:Arial;direction:rtl;"></textarea>
   </div>
   <button class="btn-send-all" id="btnSendAll" onclick="startSending()">📲 שלח לכולם</button>
 </div>
@@ -368,22 +338,20 @@
       actionBar.style.display = 'none';
       document.getElementById('loginError').style.display = 'block';
     } else {
+      // לא מכבים את הודעת השגיאה — כדי שמשתמש לא מורשה שנותק יבין למה
       loginScreen.style.display = 'flex';
       appContent.style.display = 'none';
       actionBar.style.display = 'none';
-      document.getElementById('loginError').style.display = 'none';
     }
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
   let contacts = [];
   let sendQueue = [];
   let currentSys = null;
   let sendIndex = 0;
-  let foundContact = null;
 
   // ── NAV ──
   function showPage(name, btn) {
@@ -409,8 +377,8 @@
 
       // Merge — phone is the dedup key, manual wins on conflict
       const map = new Map();
-      main.forEach(c => map.set(c.phone.replace(/\D/g,''), c));
-      manual.forEach(c => map.set(c.phone.replace(/\D/g,''), c));
+      main.forEach(c => map.set((c.phone || '').replace(/\D/g,''), c));
+      manual.forEach(c => map.set((c.phone || '').replace(/\D/g,''), c));
       contacts = Array.from(map.values());
 
       if (contacts.length > 0) {
@@ -457,9 +425,17 @@
       return;
     }
 
-    // Check duplicate phone
+    // Validate phone format (05XXXXXXXX or 9725XXXXXXXX)
     const phoneClean = phone.replace(/\D/g,'');
-    const dup = contacts.find(c => c.phone.replace(/\D/g,'') === phoneClean);
+    if (!/^05\d{8}$/.test(phoneClean) && !/^9725\d{8}$/.test(phoneClean)) {
+      statusEl.style.display = 'block';
+      statusEl.style.color = '#f44336';
+      statusEl.textContent = '⚠️ מספר לא תקין — נדרש מספר נייד ישראלי (05X-XXXXXXX)';
+      return;
+    }
+
+    // Check duplicate phone
+    const dup = contacts.find(c => (c.phone || '').replace(/\D/g,'') === phoneClean);
     if (dup) {
       statusEl.style.display = 'block';
       statusEl.style.color = '#f44336';
@@ -501,84 +477,6 @@
     } catch(e) { alert('שגיאה במחיקה: ' + e.message); }
   };
 
-  // ── PHOTO / OCR ──
-  window.handlePhoto = async function(input) {
-    const file = input.files[0];
-    if (!file) return;
-    input.value = '';
-    document.getElementById('loadingOcr').classList.remove('hidden');
-    document.getElementById('ocrBox').classList.add('hidden');
-    document.getElementById('warningBox').classList.add('hidden');
-    document.getElementById('searchResults').classList.add('hidden');
-    foundContact = null;
-
-    try {
-      const { data: { text } } = await Tesseract.recognize(file, 'heb+eng', { logger: () => {} });
-      document.getElementById('loadingOcr').classList.add('hidden');
-
-      // Check תת"ש
-      const tatashMatch = text.match(/תת["״״]?ש[^:\d]*[:\s]+(\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4})/);
-      if (tatashMatch) {
-        const parts = tatashMatch[1].split(/[\/\-.]/);
-        const tatashDate = new Date(
-          parseInt(parts[2]) < 100 ? 2000 + parseInt(parts[2]) : parseInt(parts[2]),
-          parseInt(parts[1]) - 1,
-          parseInt(parts[0])
-        );
-        const today = new Date(); today.setHours(0,0,0,0);
-        if (tatashDate > today) {
-          document.getElementById('warningBox').textContent = `⚠️ עובד זה עתיד לסיים שירות ב-${tatashMatch[1]} — לא נדרש חידוש`;
-          document.getElementById('warningBox').classList.remove('hidden');
-          return;
-        }
-      }
-
-      // Try to find in contacts
-      const cleanText = text.replace(/[^֐-׿\s]/g, ' ').replace(/\s+/g, ' ').trim();
-      let best = null, bestScore = 0;
-      for (const c of contacts) {
-        let score = 0;
-        if (cleanText.includes(c.firstName)) score += 2;
-        if (cleanText.includes(c.lastName)) score += 2;
-        if (score > bestScore) { bestScore = score; best = c; }
-      }
-
-      const ocrName = document.getElementById('ocrName');
-      const ocrStatus = document.getElementById('ocrStatus');
-
-      if (best && bestScore >= 2) {
-        foundContact = best;
-        ocrName.value = best.firstName + ' ' + best.lastName;
-        ocrStatus.innerHTML = `✅ זוהה במאגר: <span>${best.firstName} ${best.lastName} | ${best.phone}</span>`;
-        document.getElementById('btnAdd').disabled = false;
-      } else {
-        ocrName.value = cleanText.split('\n')[0].trim().substring(0, 40);
-        ocrStatus.innerHTML = `⚠️ לא נמצא במאגר — תקן את השם וחפש ידנית`;
-        document.getElementById('btnAdd').disabled = true;
-      }
-      document.getElementById('ocrBox').classList.remove('hidden');
-
-    } catch(e) {
-      document.getElementById('loadingOcr').classList.add('hidden');
-      alert('שגיאה בזיהוי תמונה — נסה שוב');
-    }
-  };
-
-  // ── ADD TO QUEUE ──
-  window.addToQueue = function() {
-    if (!foundContact) return;
-    if (sendQueue.find(c => c.phone === foundContact.phone)) {
-      alert(`${foundContact.firstName} ${foundContact.lastName} כבר ברשימה`);
-      return;
-    }
-    sendQueue.push(foundContact);
-    foundContact = null;
-    document.getElementById('ocrBox').classList.add('hidden');
-    document.getElementById('warningBox').classList.add('hidden');
-    renderQueue();
-    updateSendBtn();
-  };
-
   // ── MANUAL SEARCH ──
   window.onManualSearch = function() {
     const q = document.getElementById('manualInput').value.trim();
@@ -616,10 +514,11 @@
 
   // ── RENDER QUEUE ──
   function renderQueue() {
+    localStorage.setItem('mq_queue', JSON.stringify(sendQueue)); // שמירה אוטומטית — רענון לא מוחק את הרשימה
     const list = document.getElementById('queueList');
     document.getElementById('queueCount').textContent = `${sendQueue.length} עובדים`;
     if (!sendQueue.length) {
-      list.innerHTML = '<div class="empty-queue">צלם תמונה מהסאפ כדי להוסיף עובדים</div>';
+      list.innerHTML = '<div class="empty-queue">חפש שם למעלה כדי להוסיף עובדים לרשימה</div>';
       return;
     }
     list.innerHTML = sendQueue.map((c, i) => `
@@ -652,8 +551,16 @@
   function updateSendBtn() {
     const freeOk = currentSys !== 'free' || document.getElementById('freeText').value.trim().length > 0;
     const ready = sendQueue.length > 0 && currentSys && freeOk;
-    document.getElementById('btnSendAll').classList.toggle('ready', ready);
+    const btn = document.getElementById('btnSendAll');
+    btn.classList.toggle('ready', ready);
+    btn.textContent = sendQueue.length ? `📲 שלח לכולם (${sendQueue.length})` : '📲 שלח לכולם';
   }
+
+  // ── שחזור רשימה שמורה (אחרי רענון בטעות) ──
+  try {
+    const saved = JSON.parse(localStorage.getItem('mq_queue') || '[]');
+    if (saved.length) { sendQueue = saved; renderQueue(); updateSendBtn(); }
+  } catch(e) {}
 
   // ── SENDING FLOW ──
   window.startSending = function() {
@@ -675,7 +582,7 @@
     const link = currentSys === 'atli'
       ? 'https://kitbag.digital.idf.il/'
       : 'https://navykitbag.prat.idf.il/login';
-    return `שלום ${c.firstName} ${c.lastName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג בקרוב.\nעל מנת להמשיך להחזיק את הציוד ברשותך, נדרש ממך לבצע חידוש חתימה בהקדם.\n\nלחץ על הקישור לחידוש החתימה:\n🔗 ${link}\n\nבברכה,\nצוות האפסנאות`;
+    return `שלום ${c.firstName} ${c.lastName},\n\nחתימת ההשאלה שלך על הציוד עומדת לפוג בקרוב.\nעל מנת להמשיך להחזיק את הציוד ברשותך, נדרש ממך לבצע חידוש חתימה בהקדם.\n\nלחץ על הקישור לחידוש החתימה 🔗\n\n${link}\n\nבברכה,\nצוות האפסנאות`;
   }
 
   function renderSendStep() {
@@ -692,7 +599,6 @@
     }
 
     const c = sendQueue[sendIndex];
-    const isAtli = currentSys === 'atli';
     const msg = buildMsg(c);
     const phone = c.phone.replace(/\D/g, '');
     const intl = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
@@ -736,8 +642,9 @@
     sendQueue = [];
     sendIndex = 0;
     currentSys = null;
-    document.getElementById('btnAtli').classList.remove('active-sys');
-    document.getElementById('btnYeudi').classList.remove('active-sys');
+    ['btnAtli','btnYeudi','btnMadim','btnFree'].forEach(id => document.getElementById(id).classList.remove('active-sys'));
+    document.getElementById('freeText').value = '';
+    document.getElementById('freeTextBox').style.display = 'none';
     document.getElementById('page-sending').classList.remove('active');
     document.getElementById('page-scan').classList.add('active');
     document.getElementById('actionBar').style.display = 'flex';
@@ -770,26 +677,34 @@
     if (!newC.length) { status.textContent = '❌ לא נמצאו נתונים'; status.className = 'status-box error'; return; }
     try {
       const { collection, getDocs, writeBatch, doc } = window._fs;
+      const CHUNK = 450; // Firebase מגביל batch ל-500 פעולות
 
       // מספרי טלפון מהאקסל החדש
       const excelPhones = new Set(newC.map(c => c.phone.replace(/\D/g,'')));
 
-      // מחק ומלא מחדש את contacts
+      // מחק את contacts הקיים — במנות
       const existing = await getDocs(collection(window._db, 'contacts'));
-      const b1 = writeBatch(window._db);
-      existing.docs.forEach(d => b1.delete(d.ref));
-      await b1.commit();
-      const b2 = writeBatch(window._db);
-      newC.forEach((c, i) => b2.set(doc(collection(window._db, 'contacts'), String(i)), c));
-      await b2.commit();
+      for (let i = 0; i < existing.docs.length; i += CHUNK) {
+        const b = writeBatch(window._db);
+        existing.docs.slice(i, i + CHUNK).forEach(d => b.delete(d.ref));
+        await b.commit();
+      }
+
+      // כתוב את החדש — במנות, עם חיווי התקדמות
+      for (let i = 0; i < newC.length; i += CHUNK) {
+        const b = writeBatch(window._db);
+        newC.slice(i, i + CHUNK).forEach((c, j) => b.set(doc(collection(window._db, 'contacts'), String(i + j)), c));
+        await b.commit();
+        status.textContent = `מעלה... ${Math.min(i + CHUNK, newC.length)} מתוך ${newC.length}`;
+      }
 
       // מחק מ-manual_contacts רק כפילויות לפי טלפון
       const manualSnap = await getDocs(collection(window._db, 'manual_contacts'));
-      const dups = manualSnap.docs.filter(d => excelPhones.has(d.data().phone.replace(/\D/g,'')));
-      if (dups.length) {
-        const b3 = writeBatch(window._db);
-        dups.forEach(d => b3.delete(d.ref));
-        await b3.commit();
+      const dups = manualSnap.docs.filter(d => excelPhones.has((d.data().phone || '').replace(/\D/g,'')));
+      for (let i = 0; i < dups.length; i += CHUNK) {
+        const b = writeBatch(window._db);
+        dups.slice(i, i + CHUNK).forEach(d => b.delete(d.ref));
+        await b.commit();
       }
 
       status.textContent = `✅ הועלו ${newC.length} עובדים${dups.length ? ` | הוסרו ${dups.length} כפילויות ידניות` : ''}`;
