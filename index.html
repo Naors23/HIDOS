@@ -387,7 +387,7 @@
   let contacts = [];
   let sendQueue = [];
   let currentSys = null;
-  let sendIndex = 0;
+  let sendTotal = 0;
 
   // ── NAV ──
   function showPage(name, btn) {
@@ -607,7 +607,7 @@
   // ── SENDING FLOW ──
   window.startSending = function() {
     if (!sendQueue.length || !currentSys) return;
-    sendIndex = 0;
+    sendTotal = sendQueue.length;
     document.getElementById('page-scan').classList.remove('active');
     document.getElementById('actionBar').style.display = 'none';
     document.getElementById('page-sending').classList.add('active');
@@ -629,27 +629,28 @@
 
   function renderSendStep() {
     const el = document.getElementById('sendingContent');
-    if (sendIndex >= sendQueue.length) {
+    if (!sendQueue.length) {
       el.innerHTML = `
         <div class="done-screen">
           <div class="done-icon">✅</div>
           <h2>הסתיים!</h2>
-          <p style="color:#aaa">נשלחו הודעות ל-${sendQueue.length} עובדים</p>
+          <p style="color:#aaa">נשלחו הודעות ל-${sendTotal} עובדים</p>
           <button class="btn-done" onclick="finishSending()">חזור לרשימה חדשה</button>
         </div>`;
       return;
     }
 
-    const c = sendQueue[sendIndex];
+    const c = sendQueue[0];
+    const stepNum = sendTotal - sendQueue.length + 1;
     const msg = buildMsg(c);
     const phone = c.phone.replace(/\D/g, '');
     const intl = phone.startsWith('0') ? '972' + phone.slice(1) : phone;
     const waUrl = `https://wa.me/${intl}?text=${encodeURIComponent(msg)}`;
-    const nextName = sendIndex + 1 < sendQueue.length ? sendQueue[sendIndex + 1].firstName + ' ' + sendQueue[sendIndex + 1].lastName : 'סיום';
+    const nextName = sendQueue.length > 1 ? sendQueue[1].firstName + ' ' + sendQueue[1].lastName : 'סיום';
 
     el.innerHTML = `
-      <div class="progress-label">${sendIndex + 1} מתוך ${sendQueue.length}</div>
-      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${((sendIndex+1)/sendQueue.length)*100}%"></div></div>
+      <div class="progress-label">${stepNum} מתוך ${sendTotal}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${(stepNum/sendTotal)*100}%"></div></div>
       <div class="send-card">
         <div class="send-card-badge ${currentSys === 'atli' ? 'badge-atli' : currentSys === 'yeudi' ? 'badge-yeudi' : ''}" style="${currentSys === 'free' ? 'background:#2a2a3e;color:#e2b96f;border:1px solid #e2b96f;' : ''}">${currentSys === 'atli' ? '🟣 אטלי' : currentSys === 'yeudi' ? '⬜ יעודי' : currentSys === 'madim' ? '👕 מדים' : '✏️ הודעה חופשית'}</div>
         <div class="send-card-name">${c.firstName} ${c.lastName}</div>
@@ -665,15 +666,17 @@
   }
 
   window.nextStep = function() {
-    sendIndex++;
-    localStorage.setItem('mq_queue', JSON.stringify(sendQueue.slice(sendIndex))); // שמור רק את מי שטרם נשלח
+    sendQueue.shift(); // הסרה פיזית מהרשימה — נשלח או דולג
+    renderQueue();     // מעדכן גם את התצוגה במסך השליחה וגם את השמירה
+    updateSendBtn();
     renderSendStep();
   };
 
   window.waitForReturn = function() {
     window._waitingReturn = true;
-    logSend(sendQueue[sendIndex]); // תיעוד ביומן — רק כשבאמת נפתח וואטסאפ
-    localStorage.setItem('mq_queue', JSON.stringify(sendQueue.slice(sendIndex + 1))); // הנוכחי נשלח — לא ישוחזר אם תצא
+    logSend(sendQueue[0]); // תיעוד ביומן — רק כשבאמת נפתח וואטסאפ
+    // אם האפליקציה תיסגר בלי לחזור — הנוכחי לא ישוחזר לרשימה
+    localStorage.setItem('mq_queue', JSON.stringify(sendQueue.slice(1)));
   };
 
   // ── SEND LOG ──
@@ -762,7 +765,7 @@
 
   window.finishSending = function() {
     sendQueue = [];
-    sendIndex = 0;
+    sendTotal = 0;
     currentSys = null;
     ['btnAtli','btnYeudi','btnMadim','btnFree'].forEach(id => document.getElementById(id).classList.remove('active-sys'));
     document.getElementById('freeText').value = '';
