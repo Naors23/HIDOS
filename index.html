@@ -1,201 +1,234 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="light">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>מערכת העברת הודעות</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="theme-color" content="#F4F5F9" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      overflow-x: hidden;
-      max-width: 100vw;
+    :root {
+      --bg:#F4F5F9; --surface:#FFFFFF; --surface2:#F5F6F9; --text:#15181F; --muted:#8A8F9C; --faint:#B0B5C0;
+      --border:#E6E9F0; --primary:#274BC7; --primary-tint:#EAF0FF; --on-primary:#FFFFFF; --card-shadow:0 2px 8px rgba(23,33,66,0.05);
+      --atli-bg:#F3EEFF; --atli-fg:#5B3FA6; --yeudi-bg:#EAF0FF; --yeudi-fg:#274BC7; --madim-bg:#E8F7EF; --madim-fg:#12864A;
+      --free-bg:#FBF1E0; --free-fg:#946012; --wa-bubble:#DCF8C6; --wa-text:#1F2A22; --wa-meta:#6E8060;
+      --green:#25D366; --on-green:#FFFFFF; --green-glow:0 8px 20px rgba(37,211,102,0.32); --nav-bg:#FFFFFF; --nav-border:#E6E9F0;
     }
+    :root[data-theme="dark"] {
+      --bg:#101320; --surface:#191D2C; --surface2:#101320; --text:#F3F5FB; --muted:#7C8296; --faint:#5C6379;
+      --border:rgba(255,255,255,0.08); --primary:#4C8DFF; --primary-tint:rgba(76,141,255,0.16); --on-primary:#06152E; --card-shadow:none;
+      --atli-bg:rgba(167,139,250,0.15); --atli-fg:#C8B6FF; --yeudi-bg:rgba(76,141,255,0.15); --yeudi-fg:#7FB0FF;
+      --madim-bg:rgba(52,211,153,0.15); --madim-fg:#4ADE9E; --free-bg:rgba(251,191,36,0.15); --free-fg:#FBD34D;
+      --wa-bubble:#005C4B; --wa-text:#E9EDEF; --wa-meta:#8FC5B6; --green:#25D366; --on-green:#06210F;
+      --green-glow:0 10px 26px rgba(37,211,102,0.30); --nav-bg:#141826; --nav-border:rgba(255,255,255,0.07);
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html, body { overflow-x:hidden; max-width:100vw; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #1a1a2e;
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      font-family:'Assistant','Segoe UI',Arial,sans-serif;
+      background:var(--bg); color:var(--text);
+      min-height:100vh; display:flex; flex-direction:column; align-items:center;
+      -webkit-font-smoothing:antialiased;
+      transition:background .35s ease, color .35s ease;
     }
+
+    /* ── HEADER ── */
     header {
-      width: 100%;
-      background: #16213e;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      position: sticky; top: 0; z-index: 100;
+      width:100%; background:var(--surface); padding:12px 16px calc(12px + env(safe-area-inset-top,0px));
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      box-shadow:0 1px 0 var(--border); position:sticky; top:0; z-index:100;
+      transition:background .35s ease;
     }
-    header h1 { font-size: 1.3rem; color: #e2b96f; }
-    nav { display: flex; gap: 8px; }
-    nav button {
-      background: transparent; border: 1px solid #444; color: #ccc;
-      padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand img { height:42px; width:42px; object-fit:contain; }
+    .brand-eyebrow { font:700 10px Rubik; letter-spacing:1px; color:var(--muted); line-height:1; }
+    .brand-title { font:700 16px Rubik; color:var(--text); line-height:1.3; }
+    nav { display:flex; gap:6px; align-items:center; }
+    .nav-pill {
+      background:transparent; border:1px solid var(--border); color:var(--muted);
+      padding:7px 13px; border-radius:20px; cursor:pointer; font:600 13px Assistant; transition:.2s;
     }
-    nav button.active { background: #e2b96f; color: #1a1a2e; border-color: #e2b96f; font-weight: bold; }
+    .nav-pill.active { background:var(--primary); color:var(--on-primary); border-color:var(--primary); font-weight:700; }
+    .icon-btn {
+      background:transparent; border:1px solid var(--border); color:var(--muted);
+      padding:7px 10px; border-radius:20px; cursor:pointer; font:600 13px Assistant; display:flex; align-items:center; gap:5px;
+    }
+    .theme-btn { background:var(--surface2); }
 
-    .page { display: none; width: 100%; max-width: 520px; padding: 16px; flex-direction: column; gap: 12px; }
-    .page.active { display: flex; }
+    /* ── PAGES ── */
+    .page { display:none; width:100%; max-width:520px; padding:16px; flex-direction:column; gap:12px; }
+    .page.active { display:flex; }
 
-    /* ── SCAN PAGE ── */
-    .manual-search { display: flex; gap: 8px; }
+    /* ── SEARCH ── */
+    .manual-search { display:flex; gap:8px; }
     .manual-search input {
-      flex: 1; background: #16213e; border: 1px solid #333; border-radius: 10px;
-      padding: 11px 14px; color: #fff; font-size: 0.95rem; text-align: right;
+      flex:1; background:var(--surface); border:1px solid var(--border); border-radius:14px;
+      padding:13px 15px; color:var(--text); font-size:16px; text-align:right; box-shadow:var(--card-shadow);
     }
-    .manual-search input:focus { outline: none; border-color: #e2b96f; }
-    .search-results {
-      background: #16213e; border-radius: 10px; overflow: hidden;
-      display: flex; flex-direction: column;
-    }
+    .manual-search input:focus { outline:none; border-color:var(--primary); }
+    .search-results { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--card-shadow); }
     .search-result-item {
-      padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1a1a2e;
-      display: flex; justify-content: space-between; align-items: center;
+      padding:12px 15px; cursor:pointer; border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center;
     }
-    .search-result-item:hover { background: #1e2d4e; }
-    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:last-child { border-bottom:none; }
+    .sr-name { font:700 14px Assistant; color:var(--text); }
+    .sr-phone { font:500 12px Assistant; color:var(--muted); }
+    .sr-add { color:var(--primary); font:700 13px Assistant; }
+
+    /* ── SECTION LABEL ── */
+    .section-label { font:600 13px Assistant; color:var(--muted); }
 
     /* ── QUEUE ── */
-    .queue-header {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .queue-header h3 { color: #e2b96f; font-size: 1rem; }
-    .queue-header span { color: #aaa; font-size: 0.85rem; }
-    .queue-list { display: flex; flex-direction: column; gap: 8px; }
+    .queue-header { display:flex; justify-content:space-between; align-items:center; }
+    .queue-header h3 { font:700 16px Rubik; color:var(--text); }
+    .queue-header span { font:700 13px Assistant; color:var(--primary); background:var(--primary-tint); padding:4px 11px; border-radius:20px; }
+    .queue-list { display:flex; flex-direction:column; gap:9px; }
     .queue-item {
-      background: #16213e; border-radius: 10px; padding: 12px 16px;
-      display: flex; justify-content: space-between; align-items: center;
+      background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:11px 13px;
+      display:flex; justify-content:space-between; align-items:center; box-shadow:var(--card-shadow);
     }
-    .queue-item-name { font-weight: bold; font-size: 0.95rem; }
-    .queue-item-phone { font-size: 0.8rem; color: #888; }
-    .btn-remove {
-      background: transparent; border: none; color: #666; cursor: pointer;
-      font-size: 1.1rem; padding: 4px 8px;
-    }
-    .btn-remove:hover { color: #f44336; }
-    .empty-queue { text-align: center; color: #555; padding: 30px; font-size: 0.9rem; }
+    .qi-left { display:flex; align-items:center; gap:11px; }
+    .qi-avatar { width:42px; height:42px; border-radius:13px; background:var(--primary-tint); display:flex; align-items:center; justify-content:center; font:700 15px Rubik; color:var(--primary); }
+    .queue-item-name { font:700 15px Assistant; color:var(--text); }
+    .queue-item-phone { font:500 13px Assistant; color:var(--muted); }
+    .btn-remove { width:30px; height:30px; border-radius:50%; background:var(--surface2); border:none; color:var(--faint); cursor:pointer; font-size:14px; }
+    .empty-queue { text-align:center; color:var(--faint); padding:26px; font:500 14px Assistant; background:var(--surface); border:1px dashed var(--border); border-radius:16px; }
 
     /* ── ACTION BAR ── */
     .action-bar {
-      width: 100%; max-width: 520px;
-      position: sticky; bottom: 0;
-      background: #1a1a2e; border-top: 1px solid #2a2a3e;
-      padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;
+      width:100%; max-width:520px; position:sticky; bottom:0;
+      background:var(--bg); border-top:1px solid var(--border);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+      display:flex; flex-direction:column; gap:10px; transition:background .35s ease;
     }
-    .system-btns { display: flex; gap: 10px; }
-    .btn-atli {
-      flex: 1; padding: 12px; border: 2px solid transparent; border-radius: 12px;
-      font-size: 0.95rem; font-weight: bold; cursor: pointer;
-      background: linear-gradient(135deg, #7c5cbf, #5a3fa0); color: #fff;
+    .system-btns { display:flex; gap:8px; }
+    .sys-chip {
+      flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+      padding:13px 6px; border-radius:14px; font:600 14px Assistant; cursor:pointer;
+      background:var(--surface); border:1.5px solid var(--border); color:var(--text); transition:.2s;
     }
-    .btn-yeudi {
-      flex: 1; padding: 12px; border: 2px solid #2a5a8c; border-radius: 12px;
-      font-size: 0.95rem; font-weight: bold; cursor: pointer;
-      background: linear-gradient(135deg, #1a3a5c, #0f2440); color: #fff;
+    .sys-chip.active-sys.chip-atli  { background:var(--atli-bg);  border-color:var(--atli-fg);  color:var(--atli-fg);  font-weight:700; }
+    .sys-chip.active-sys.chip-yeudi { background:var(--yeudi-bg); border-color:var(--yeudi-fg); color:var(--yeudi-fg); font-weight:700; }
+    .sys-chip.active-sys.chip-madim { background:var(--madim-bg); border-color:var(--madim-fg); color:var(--madim-fg); font-weight:700; }
+    .sys-chip.active-sys.chip-free  { background:var(--free-bg);  border-color:var(--free-fg);  color:var(--free-fg);  font-weight:700; }
+    #freeText {
+      width:100%; height:90px; background:var(--surface); border:1.5px solid var(--free-fg); border-radius:13px;
+      padding:12px; color:var(--text); font:500 14px Assistant; resize:none; direction:rtl;
     }
-    .btn-free {
-      flex: 1; padding: 12px; border: 2px solid #555; border-radius: 12px;
-      font-size: 0.95rem; font-weight: bold; cursor: pointer;
-      background: #2a2a3e; color: #fff;
-    }
-    .btn-atli.active-sys { border-color: #fff; }
-    .btn-yeudi.active-sys { border-color: #4fc3f7; }
-    .btn-free.active-sys { border-color: #e2b96f; color: #e2b96f; }
+    #freeText:focus { outline:none; }
     .btn-send-all {
-      width: 100%; padding: 14px; border: none; border-radius: 12px;
-      font-size: 1.05rem; font-weight: bold; cursor: pointer;
-      background: #25d366; color: #fff; opacity: 0.35; transition: opacity 0.2s;
+      width:100%; padding:16px; border:none; border-radius:16px; font:700 17px Rubik; cursor:pointer;
+      background:var(--green); color:var(--on-green); box-shadow:var(--green-glow);
+      opacity:0.4; transition:opacity 0.2s;
     }
-    .btn-send-all.ready { opacity: 1; }
+    .btn-send-all.ready { opacity:1; }
 
     /* ── SENDING FLOW ── */
-    .sending-page { display: none; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 520px; padding: 16px; }
-    .sending-page.active { display: flex; }
-    .progress-bar-wrap { width: 100%; background: #16213e; border-radius: 6px; height: 6px; }
-    .progress-bar { height: 100%; background: #e2b96f; border-radius: 6px; transition: width 0.3s; }
-    .progress-label { color: #aaa; font-size: 0.85rem; text-align: center; }
+    .sending-page { display:none; flex-direction:column; gap:14px; width:100%; max-width:520px; padding:16px; }
+    .sending-page.active { display:flex; }
+    .send-top { display:flex; align-items:center; justify-content:space-between; font:700 13px Assistant; color:var(--muted); }
+    .send-top b { color:var(--text); }
+    .progress-bar-wrap { width:100%; background:var(--border); border-radius:10px; height:8px; overflow:hidden; }
+    .progress-bar { height:100%; background:var(--primary); border-radius:10px; transition:width 0.3s; }
     .send-card {
-      width: 100%; background: #16213e; border-radius: 16px; padding: 22px;
-      display: flex; flex-direction: column; gap: 14px;
+      width:100%; background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:22px 20px;
+      display:flex; flex-direction:column; align-items:center; gap:10px; box-shadow:var(--card-shadow);
     }
-    .send-card-badge {
-      text-align: center; padding: 5px 14px; border-radius: 20px;
-      font-size: 0.8rem; font-weight: bold; width: fit-content; margin: 0 auto;
-    }
-    .badge-atli { background: #5a3fa0; color: #fff; }
-    .badge-yeudi { background: #0f2440; color: #4fc3f7; border: 1px solid #2a5a8c; }
-    .send-card-name { font-size: 1.5rem; font-weight: bold; text-align: center; }
-    .send-card-phone { text-align: center; color: #888; font-size: 0.85rem; }
+    .send-avatar { width:66px; height:66px; border-radius:20px; background:var(--primary-tint); display:flex; align-items:center; justify-content:center; font:700 24px Rubik; color:var(--primary); }
+    .type-pill { font:700 12px Assistant; padding:4px 10px; border-radius:16px; }
+    .type-atli  { background:var(--atli-bg);  color:var(--atli-fg); }
+    .type-yeudi { background:var(--yeudi-bg); color:var(--yeudi-fg); }
+    .type-madim { background:var(--madim-bg); color:var(--madim-fg); }
+    .type-free  { background:var(--free-bg);  color:var(--free-fg); }
+    .send-card-name { font:700 24px Rubik; color:var(--text); }
+    .send-card-phone { color:var(--muted); font:500 14px Assistant; margin-top:-4px; }
     .send-card-msg {
-      background: #1a1a2e; border-radius: 10px; padding: 14px;
-      font-size: 0.85rem; color: #ccc; line-height: 1.8; white-space: pre-line; text-align: right;
+      width:100%; background:var(--wa-bubble); border-radius:16px; border-top-right-radius:5px; padding:13px 15px; margin-top:6px;
+      font:500 14px Assistant; color:var(--wa-text); line-height:1.7; white-space:pre-line; text-align:right;
     }
     .btn-open-wa {
-      width: 100%; padding: 15px; border: none; border-radius: 12px;
-      font-size: 1.05rem; font-weight: bold; cursor: pointer;
-      background: #25d366; color: #fff; text-decoration: none;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width:100%; padding:15px; border:none; border-radius:15px; font:700 16px Rubik; cursor:pointer; margin-top:8px;
+      background:var(--green); color:var(--on-green); text-decoration:none;
+      display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:var(--green-glow);
     }
-    .btn-next-contact {
-      width: 100%; padding: 13px; border: 1px solid #333; border-radius: 12px;
-      background: transparent; color: #ccc; cursor: pointer; font-size: 0.95rem;
-    }
-    .btn-skip-contact { background: transparent; border: none; color: #555; cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
-    .done-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
-    .done-icon { font-size: 4rem; }
-    .done-screen h2 { color: #4caf50; }
-    .btn-done { padding: 12px 28px; border: 1px solid #444; border-radius: 10px; background: transparent; color: #ccc; cursor: pointer; }
+    .btn-next-contact { width:100%; padding:14px; border:1.5px solid var(--border); border-radius:15px; background:var(--surface); color:var(--text); cursor:pointer; font:700 15px Assistant; }
+    .btn-skip-contact { background:transparent; border:none; color:var(--faint); cursor:pointer; font:600 13px Assistant; text-decoration:underline; padding:4px; }
+    .done-screen { text-align:center; padding:56px 20px; display:flex; flex-direction:column; gap:14px; align-items:center; }
+    .done-icon { font-size:64px; }
+    .done-screen h2 { color:var(--text); font:800 26px Rubik; }
+    .done-screen p { color:var(--muted); font:500 15px Assistant; }
+    .btn-done { padding:14px 28px; border:none; border-radius:14px; background:var(--primary); color:var(--on-primary); cursor:pointer; font:700 15px Rubik; }
 
-    /* ── UPLOAD PAGE ── */
-    .upload-box {
-      width: 100%; border: 2px dashed #444; border-radius: 16px;
-      padding: 40px 20px; text-align: center; cursor: pointer;
+    /* ── UPLOAD / DB ── */
+    .stat-row { display:flex; gap:9px; }
+    .stat-tile { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:15px 12px; box-shadow:var(--card-shadow); }
+    .stat-num { font:800 26px Rubik; color:var(--text); }
+    .stat-num.p { color:var(--primary); }
+    .stat-num.g { color:var(--free-fg); }
+    .stat-label { font:500 12px Assistant; color:var(--muted); margin-top:2px; }
+    .upload-box { width:100%; border:2px dashed var(--border); background:var(--surface); border-radius:18px; padding:30px 20px; text-align:center; cursor:pointer; }
+    .upload-box:hover { border-color:var(--primary); }
+    .upload-icon { font-size:34px; }
+    .upload-box p { color:var(--muted); margin-top:8px; font:500 13px Assistant; }
+    .upload-box p.hint { font-size:12px; margin-top:4px; color:var(--faint); }
+    .status-box { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; font:600 14px Assistant; color:var(--muted); text-align:center; box-shadow:var(--card-shadow); }
+    .status-box.success { color:var(--madim-fg); border-color:var(--madim-fg); }
+    .status-box.error { color:#E5484D; border-color:#E5484D; }
+    .add-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--card-shadow); }
+    .add-card-title { font:700 15px Rubik; color:var(--text); }
+    .add-inputs { display:flex; gap:8px; width:100%; min-width:0; }
+    .add-card input {
+      flex:1; min-width:0; background:var(--surface2); border:1px solid var(--border); border-radius:11px;
+      padding:12px; color:var(--text); font:500 14px Assistant; text-align:right; width:100%;
     }
-    .upload-box:hover { border-color: #e2b96f; }
-    .upload-icon { font-size: 3rem; }
-    .upload-box p { color: #aaa; margin-top: 10px; font-size: 0.9rem; }
-    .status-box {
-      width: 100%; background: #16213e; border-radius: 12px;
-      padding: 16px; font-size: 0.9rem; color: #aaa; text-align: center;
-    }
-    .status-box.success { color: #4caf50; border: 1px solid #4caf50; }
-    .status-box.error { color: #f44336; border: 1px solid #f44336; }
+    .add-card input:focus { outline:none; border-color:var(--primary); }
+    .btn-save { background:var(--primary); color:var(--on-primary); border:none; border-radius:12px; padding:13px; font:700 15px Rubik; cursor:pointer; }
+    .mc-item { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:11px 13px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--card-shadow); }
+    .mc-name { font:700 14px Assistant; color:var(--text); }
+    .mc-phone { font:500 12px Assistant; color:var(--muted); }
+    .mc-del { background:transparent; border:none; color:var(--faint); cursor:pointer; font-size:15px; padding:4px 8px; }
+    .mc-empty { color:var(--faint); font:500 14px Assistant; text-align:center; padding:14px; }
 
     /* ── HISTORY ── */
-    .hist-filter {
-      background: transparent; border: 1px solid #333; color: #999;
-      padding: 6px 12px; border-radius: 16px; cursor: pointer; font-size: 0.78rem;
-    }
-    .hist-filter.active { background: #e2b96f; color: #1a1a2e; border-color: #e2b96f; font-weight: bold; }
-    .hist-item {
-      background: #16213e; border-radius: 10px; padding: 10px 14px;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .hist-item-date { color: #666; font-size: 0.72rem; }
+    .hist-filter { background:var(--surface); border:1px solid var(--border); color:var(--muted); padding:7px 13px; border-radius:20px; cursor:pointer; font:600 13px Assistant; }
+    .hist-filter.active { background:var(--primary); color:var(--on-primary); border-color:var(--primary); font-weight:700; }
+    .hist-item { background:var(--surface); border:1px solid var(--border); border-radius:13px; padding:11px 13px; display:flex; justify-content:space-between; align-items:center; box-shadow:var(--card-shadow); }
+    .hist-name { font:700 14px Assistant; color:var(--text); }
+    .hist-item-date { color:var(--faint); font:500 12px Assistant; }
 
-    .loading { color: #e2b96f; font-size: 0.85rem; text-align: center; }
-    .warning { background: #3a1a1a; border: 1px solid #f44336; border-radius: 12px; padding: 14px; color: #f44336; font-size: 0.9rem; text-align: center; }
-    .hidden { display: none !important; }
+    .warning { background:var(--free-bg); border:1px solid var(--free-fg); border-radius:12px; padding:14px; color:var(--free-fg); font:600 14px Assistant; text-align:center; }
+    .hidden { display:none !important; }
+
+    /* ── LOGIN ── */
+    #loginScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:22px; padding:24px; width:100%; }
+    .login-crest { height:96px; width:96px; object-fit:contain; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.15)); }
+    .login-eyebrow { font:700 12px Rubik; letter-spacing:2px; color:var(--muted); text-align:center; }
+    .login-title { font:800 26px Rubik; color:var(--text); text-align:center; margin-top:4px; }
+    .login-sub { font:500 14px Assistant; color:var(--muted); text-align:center; margin-top:6px; max-width:280px; line-height:1.6; }
+    .login-error { display:none; background:var(--free-bg); border:1px solid var(--free-fg); border-radius:12px; padding:14px 20px; color:var(--free-fg); text-align:center; font:600 14px Assistant; }
+    .btn-google {
+      display:flex; align-items:center; gap:12px; background:var(--surface); color:var(--text); border:1px solid var(--border);
+      border-radius:14px; padding:15px 28px; font:700 16px Rubik; cursor:pointer; box-shadow:0 6px 22px rgba(0,0,0,0.12);
+    }
+    .footer-credit { width:100%; text-align:center; padding:16px; color:var(--faint); font:500 11px Assistant; }
   </style>
 </head>
 <body>
 
 <!-- LOGIN SCREEN -->
-<div id="loginScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px;padding:24px;width:100%;">
-  <img src="ashdod.png.png" style="height:80px;width:80px;object-fit:contain;" />
-  <div style="text-align:center;">
-    <div style="font-size:0.85rem;color:rgba(226,185,111,0.7);">בסיס אשדוד</div>
-    <div style="font-size:1.4rem;font-weight:bold;color:#e2b96f;">מערכת העברת הודעות</div>
+<div id="loginScreen">
+  <img src="ashdod.png.png" class="login-crest" />
+  <div>
+    <div class="login-eyebrow">בסיס אשדוד</div>
+    <div class="login-title">מערכת העברת הודעות</div>
+    <div class="login-sub">התחבר עם חשבון Google המורשה כדי להיכנס למערכת</div>
   </div>
-  <div id="loginError" style="display:none;background:#3a1a1a;border:1px solid #f44336;border-radius:12px;padding:14px 20px;color:#f44336;text-align:center;font-size:0.9rem;">
-    ❌ אין לך הרשאה להשתמש באפליקציה זו
-  </div>
-  <button onclick="window._signIn()" style="display:flex;align-items:center;gap:12px;background:#fff;color:#1a1a2e;border:none;border-radius:12px;padding:14px 28px;font-size:1rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.4);">
+  <div id="loginError" class="login-error">❌ אין לך הרשאה להשתמש באפליקציה זו</div>
+  <button onclick="window._signIn()" class="btn-google">
     <svg width="22" height="22" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.1 29.2 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.3 28.9 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.3 28.9 5 24 5 16.3 5 9.7 9.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c4.8 0 9.2-1.8 12.5-4.8l-5.8-4.9C29 36.9 26.6 38 24 38c-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.6 40.5 16.3 45 24 45z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.5l5.8 4.9C36.2 40 44 34.4 44 25c0-1.3-.1-2.6-.4-3.9z"/></svg>
     התחבר עם Google
   </button>
@@ -205,26 +238,26 @@
 <div id="appContent" style="display:none;width:100%;flex-direction:column;align-items:center;">
 
 <header>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src="ashdod.png.png" style="height:44px;width:44px;object-fit:contain;" />
+  <div class="brand">
+    <img src="ashdod.png.png" />
     <div>
-      <div style="font-size:0.75rem;color:rgba(226,185,111,0.7);line-height:1;">בסיס אשדוד</div>
-      <div style="font-size:1rem;font-weight:bold;color:#e2b96f;line-height:1.3;">מערכת העברת הודעות</div>
+      <div class="brand-eyebrow">בסיס אשדוד</div>
+      <div class="brand-title">העברת הודעות</div>
     </div>
   </div>
   <nav>
-    <button class="active" id="navScan" onclick="showPage('scan', this)">שליחה</button>
-    <button id="navUpload" onclick="showPage('upload', this)">מאגר</button>
-    <button id="navHistory" onclick="showPage('history', this); loadHistory()">📋</button>
-    <button onclick="window._signOut()" title="התנתק" style="background:transparent;border:1px solid #444;color:#888;padding:6px 10px;border-radius:20px;cursor:pointer;font-size:0.75rem;">יציאה</button>
+    <button class="nav-pill active" id="navScan" onclick="showPage('scan', this)">שליחה</button>
+    <button class="nav-pill" id="navUpload" onclick="showPage('upload', this)">מאגר</button>
+    <button class="nav-pill" id="navHistory" onclick="showPage('history', this); loadHistory()">📋</button>
+    <button class="icon-btn theme-btn" onclick="window._toggleTheme()" title="מצב יום/לילה"><span id="themeIcon">🌙</span></button>
+    <button class="icon-btn" onclick="window._signOut()" title="התנתק">יציאה</button>
   </nav>
 </header>
 
-<!-- SCAN PAGE -->
+<!-- SCAN / SEND PAGE -->
 <div class="page active" id="page-scan">
-
   <div class="manual-search">
-    <input type="text" id="manualInput" placeholder="הכנס שם..." oninput="onManualSearch()" />
+    <input type="text" id="manualInput" placeholder="🔍  חפש עובד להוספה…" oninput="onManualSearch()" />
   </div>
   <div id="searchResults" class="search-results hidden"></div>
 
@@ -240,13 +273,13 @@
 <!-- ACTION BAR -->
 <div class="action-bar" id="actionBar">
   <div class="system-btns">
-    <button class="btn-atli" id="btnAtli" onclick="selectSys('atli')">🟣 אטלי</button>
-    <button class="btn-yeudi" id="btnYeudi" onclick="selectSys('yeudi')">⬜ יעודי</button>
-    <button class="btn-free" id="btnMadim" onclick="selectSys('madim')">👕 מדים</button>
-    <button class="btn-free" id="btnFree" onclick="selectSys('free')">✏️ חופשי</button>
+    <button class="sys-chip chip-atli"  id="btnAtli"  onclick="selectSys('atli')">🟣 אטלי</button>
+    <button class="sys-chip chip-yeudi" id="btnYeudi" onclick="selectSys('yeudi')">⬜ יעודי</button>
+    <button class="sys-chip chip-madim" id="btnMadim" onclick="selectSys('madim')">👕 מדים</button>
+    <button class="sys-chip chip-free"  id="btnFree"  onclick="selectSys('free')">✏️ חופשי</button>
   </div>
   <div id="freeTextBox" style="display:none;width:100%;">
-    <textarea id="freeText" oninput="updateSendBtn()" placeholder="כתוב כאן את ההודעה החופשית..." style="width:100%;height:90px;background:#1a1a2e;border:1px solid #e2b96f;border-radius:10px;padding:10px;color:#fff;font-size:0.95rem;resize:none;font-family:Arial;direction:rtl;"></textarea>
+    <textarea id="freeText" oninput="updateSendBtn()" placeholder="כתוב כאן את ההודעה החופשית…"></textarea>
   </div>
   <button class="btn-send-all" id="btnSendAll" onclick="startSending()">📲 שלח לכולם</button>
 </div>
@@ -256,47 +289,48 @@
   <div id="sendingContent"></div>
 </div>
 
-<!-- UPLOAD PAGE -->
+<!-- UPLOAD / DB PAGE -->
 <span id="userEmail" style="display:none"></span>
 <div class="page" id="page-upload">
+  <div class="stat-row">
+    <div class="stat-tile"><div class="stat-num p" id="statTotal">0</div><div class="stat-label">במאגר</div></div>
+    <div class="stat-tile"><div class="stat-num" id="statExcel">0</div><div class="stat-label">מאקסל</div></div>
+    <div class="stat-tile"><div class="stat-num g" id="statManual">0</div><div class="stat-label">ידני</div></div>
+  </div>
 
-  <!-- Excel Import -->
   <div class="upload-box" onclick="document.getElementById('xlInput').click()">
     <div class="upload-icon">📊</div>
     <p>לחץ להעלאת קובץ אקסל</p>
-    <p style="font-size:0.75rem;margin-top:6px;">עמודות: שם פרטי | שם משפחה | טלפון</p>
+    <p class="hint">עמודות: שם פרטי · שם משפחה · טלפון</p>
     <input type="file" id="xlInput" accept=".xlsx,.xls" style="display:none" onchange="handleExcel(this)" />
   </div>
   <div id="uploadStatus" class="status-box">לא הועלה קובץ עדיין</div>
 
-  <!-- Manual Contact Add -->
-  <div style="background:#16213e;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-    <div style="color:#e2b96f;font-weight:bold;font-size:0.95rem;">➕ הוספת איש קשר ידנית</div>
-    <div style="display:flex;gap:8px;width:100%;min-width:0;">
-      <input type="text" id="manualFirst" placeholder="שם פרטי" style="flex:1;min-width:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
-      <input type="text" id="manualLast" placeholder="שם משפחה" style="flex:1;min-width:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;" />
+  <div class="add-card">
+    <div class="add-card-title">➕ הוספת איש קשר</div>
+    <div class="add-inputs">
+      <input type="text" id="manualFirst" placeholder="שם פרטי" />
+      <input type="text" id="manualLast" placeholder="שם משפחה" />
     </div>
-    <input type="tel" id="manualPhone" placeholder="מספר טלפון" style="background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:9px 12px;color:#fff;font-size:0.9rem;text-align:right;width:100%;min-width:0;" />
-    <button onclick="saveManualContact()" style="background:#e2b96f;color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-size:0.95rem;font-weight:bold;cursor:pointer;">שמור איש קשר</button>
-    <div id="manualSaveStatus" style="display:none;font-size:0.85rem;text-align:center;"></div>
+    <input type="tel" id="manualPhone" placeholder="מספר טלפון" />
+    <button class="btn-save" onclick="saveManualContact()">שמור איש קשר</button>
+    <div id="manualSaveStatus" style="display:none;font:600 14px Assistant;text-align:center;"></div>
   </div>
 
-  <!-- Manual Contacts List -->
   <div style="display:flex;flex-direction:column;gap:8px;">
-    <div style="color:#aaa;font-size:0.85rem;padding:0 4px;">אנשי קשר שהוזנו ידנית (<span id="manualCount">0</span>)</div>
-    <div id="manualList" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <div class="section-label" style="padding:0 4px;">אנשי קשר שהוזנו ידנית (<span id="manualCount">0</span>)</div>
+    <div id="manualList" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
-
 </div>
 
 <!-- HISTORY PAGE -->
 <div class="page" id="page-history">
   <div class="queue-header">
-    <h3>📋 יומן שליחות</h3>
+    <h3>יומן שליחות</h3>
     <span id="histCount"></span>
   </div>
   <div class="manual-search">
-    <input type="text" id="histSearch" placeholder="חפש שם..." oninput="renderHistory()" />
+    <input type="text" id="histSearch" placeholder="🔍  חפש שם…" oninput="renderHistory()" />
   </div>
   <div id="histFilters" style="display:flex;gap:6px;flex-wrap:wrap;">
     <button class="hist-filter active" data-sys="" onclick="setHistFilter(this)">הכל</button>
@@ -305,18 +339,34 @@
     <button class="hist-filter" data-sys="madim" onclick="setHistFilter(this)">👕 מדים</button>
     <button class="hist-filter" data-sys="free" onclick="setHistFilter(this)">✏️ חופשי</button>
   </div>
-  <div id="histList" style="display:flex;flex-direction:column;gap:6px;">
-    <div class="empty-queue">טוען...</div>
+  <div id="histList" style="display:flex;flex-direction:column;gap:8px;">
+    <div class="empty-queue">טוען…</div>
   </div>
-  <div style="text-align:center;color:#444;font-size:0.7rem;padding:6px;">מוצגות עד 200 השליחות האחרונות • רשומות נמחקות אוטומטית אחרי 3 חודשים</div>
+  <div style="text-align:center;color:var(--faint);font:500 11px Assistant;padding:6px;">מוצגות עד 200 השליחות האחרונות · רשומות נמחקות אוטומטית אחרי 3 חודשים</div>
 </div>
 
-  <div style="width:100%;text-align:center;padding:16px;color:rgba(255,255,255,0.2);font-size:0.7rem;">
-    כל הזכויות שמורות — נאור סעדי
-  </div>
+  <div class="footer-credit">כל הזכויות שמורות — נאור סעדי</div>
 </div><!-- /appContent -->
 
 <script>
+  // ── THEME (יום/לילה) ──
+  (function(){ try { document.documentElement.setAttribute('data-theme', localStorage.getItem('hidos_theme') || 'light'); } catch(e){} })();
+  window._toggleTheme = function() {
+    const el = document.documentElement;
+    const dark = el.getAttribute('data-theme') === 'dark';
+    const next = dark ? 'light' : 'dark';
+    el.setAttribute('data-theme', next);
+    try { localStorage.setItem('hidos_theme', next); } catch(e){}
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.textContent = next === 'dark' ? '☀️' : '🌙';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', next === 'dark' ? '#101320' : '#F4F5F9');
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+  });
+
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 
@@ -366,7 +416,7 @@
       document.getElementById('actionBar').style.display = 'flex';
       document.getElementById('userEmail').textContent = user.email;
       window.loadContacts();
-      window.cleanOldLogs(); // ניקוי רשומות יומן ישנות ברקע
+      window.cleanOldLogs();
     } else if (user) {
       signOut(auth);
       loginScreen.style.display = 'flex';
@@ -374,7 +424,6 @@
       actionBar.style.display = 'none';
       document.getElementById('loginError').style.display = 'block';
     } else {
-      // לא מכבים את הודעת השגיאה — כדי שמשתמש לא מורשה שנותק יבין למה
       loginScreen.style.display = 'flex';
       appContent.style.display = 'none';
       actionBar.style.display = 'none';
@@ -389,10 +438,13 @@
   let currentSys = null;
   let sendTotal = 0;
 
+  const INI = (c) => ((c.firstName||'')[0]||'') + ((c.lastName||'')[0]||'');
+  const SYS_BADGE = { atli:'🟣 אטלי', yeudi:'⬜ יעודי', madim:'👕 מדים', free:'✏️ הודעה חופשית' };
+
   // ── NAV ──
   function showPage(name, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('nav .nav-pill').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('page-sending').classList.remove('active');
     btn.classList.add('active');
@@ -411,19 +463,21 @@
       const main = snapMain.docs.map(d => ({ ...d.data(), _src: 'excel' }));
       const manual = snapManual.docs.map(d => ({ ...d.data(), _id: d.id, _src: 'manual' }));
 
-      // Merge — phone is the dedup key, manual wins on conflict
       const map = new Map();
       main.forEach(c => map.set((c.phone || '').replace(/\D/g,''), c));
       manual.forEach(c => map.set((c.phone || '').replace(/\D/g,''), c));
       contacts = Array.from(map.values());
 
+      const s = document.getElementById('uploadStatus');
       if (contacts.length > 0) {
-        const s = document.getElementById('uploadStatus');
-        s.textContent = `✅ ${contacts.length} עובדים במאגר (${main.length} מאקסל, ${manual.length} ידניים)`;
+        s.textContent = `✅ ${contacts.length} עובדים במאגר`;
         s.className = 'status-box success';
       }
+      const st = document.getElementById('statTotal'), se = document.getElementById('statExcel'), sm = document.getElementById('statManual');
+      if (st) st.textContent = contacts.length;
+      if (se) se.textContent = main.length;
+      if (sm) sm.textContent = manual.length;
 
-      // Render manual list
       renderManualList(manual);
     } catch(e) { console.error(e); }
   };
@@ -434,16 +488,13 @@
     if (!list || !cnt) return;
     cnt.textContent = manual.length;
     if (!manual.length) {
-      list.innerHTML = '<div style="color:#555;font-size:0.85rem;text-align:center;padding:12px;">אין אנשי קשר ידניים עדיין</div>';
+      list.innerHTML = '<div class="mc-empty">אין אנשי קשר ידניים עדיין</div>';
       return;
     }
     list.innerHTML = manual.map(c => `
-      <div style="background:#16213e;border-radius:10px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-weight:bold;font-size:0.9rem;">${c.firstName} ${c.lastName}</div>
-          <div style="color:#888;font-size:0.8rem;">${c.phone}</div>
-        </div>
-        <button onclick="deleteManualContact('${c._id}')" style="background:transparent;border:none;color:#666;cursor:pointer;font-size:1.1rem;padding:4px 8px;">✕</button>
+      <div class="mc-item">
+        <div><div class="mc-name">${c.firstName} ${c.lastName}</div><div class="mc-phone">${c.phone}</div></div>
+        <button class="mc-del" onclick="deleteManualContact('${c._id}')">✕</button>
       </div>`).join('');
   }
 
@@ -455,48 +506,34 @@
     const statusEl = document.getElementById('manualSaveStatus');
 
     if (!firstName || !phone) {
-      statusEl.style.display = 'block';
-      statusEl.style.color = '#f44336';
-      statusEl.textContent = '⚠️ שם פרטי וטלפון הם שדות חובה';
-      return;
+      statusEl.style.display = 'block'; statusEl.style.color = '#E5484D';
+      statusEl.textContent = '⚠️ שם פרטי וטלפון הם שדות חובה'; return;
     }
-
-    // Validate phone format (05XXXXXXXX or 9725XXXXXXXX)
     const phoneClean = phone.replace(/\D/g,'');
     if (!/^05\d{8}$/.test(phoneClean) && !/^9725\d{8}$/.test(phoneClean)) {
-      statusEl.style.display = 'block';
-      statusEl.style.color = '#f44336';
-      statusEl.textContent = '⚠️ מספר לא תקין — נדרש מספר נייד ישראלי (05X-XXXXXXX)';
-      return;
+      statusEl.style.display = 'block'; statusEl.style.color = '#E5484D';
+      statusEl.textContent = '⚠️ מספר לא תקין — נדרש מספר נייד ישראלי (05X-XXXXXXX)'; return;
     }
-
-    // Check duplicate phone
     const dup = contacts.find(c => (c.phone || '').replace(/\D/g,'') === phoneClean);
     if (dup) {
-      statusEl.style.display = 'block';
-      statusEl.style.color = '#f44336';
-      statusEl.textContent = `⚠️ מספר זה כבר קיים (${dup.firstName} ${dup.lastName})`;
-      return;
+      statusEl.style.display = 'block'; statusEl.style.color = '#E5484D';
+      statusEl.textContent = `⚠️ מספר זה כבר קיים (${dup.firstName} ${dup.lastName})`; return;
     }
-
     try {
       const { collection, doc, writeBatch } = window._fs;
       const newDoc = doc(collection(window._db, 'manual_contacts'));
       const b = writeBatch(window._db);
       b.set(newDoc, { firstName, lastName, phone });
       await b.commit();
-
       document.getElementById('manualFirst').value = '';
       document.getElementById('manualLast').value = '';
       document.getElementById('manualPhone').value = '';
-      statusEl.style.display = 'block';
-      statusEl.style.color = '#4caf50';
+      statusEl.style.display = 'block'; statusEl.style.color = 'var(--madim-fg)';
       statusEl.textContent = `✅ ${firstName} ${lastName} נשמר`;
       setTimeout(() => statusEl.style.display = 'none', 2500);
       window.loadContacts();
     } catch(e) {
-      statusEl.style.display = 'block';
-      statusEl.style.color = '#f44336';
+      statusEl.style.display = 'block'; statusEl.style.color = '#E5484D';
       statusEl.textContent = '❌ שגיאה: ' + e.message;
     }
   };
@@ -531,11 +568,8 @@
     if (!found.length) { res.classList.add('hidden'); return; }
     res.innerHTML = found.map(c => `
       <div class="search-result-item" onclick="addManual('${c.phone}')">
-        <div>
-          <div style="font-weight:bold">${c.firstName} ${c.lastName}</div>
-          <div style="font-size:0.8rem;color:#888">${c.phone}</div>
-        </div>
-        <span style="color:#e2b96f;font-size:0.8rem">+ הוסף</span>
+        <div><div class="sr-name">${c.firstName} ${c.lastName}</div><div class="sr-phone">${c.phone}</div></div>
+        <span class="sr-add">+ הוסף</span>
       </div>`).join('');
     res.classList.remove('hidden');
   };
@@ -543,10 +577,7 @@
   window.addManual = function(phone) {
     const c = contacts.find(x => x.phone === phone);
     if (!c) return;
-    if (sendQueue.find(x => x.phone === phone)) {
-      alert(`${c.firstName} ${c.lastName} כבר ברשימה`);
-      return;
-    }
+    if (sendQueue.find(x => x.phone === phone)) { alert(`${c.firstName} ${c.lastName} כבר ברשימה`); return; }
     sendQueue.push(c);
     document.getElementById('manualInput').value = '';
     document.getElementById('searchResults').classList.add('hidden');
@@ -556,7 +587,7 @@
 
   // ── RENDER QUEUE ──
   function renderQueue() {
-    localStorage.setItem('mq_queue', JSON.stringify(sendQueue)); // שמירה אוטומטית — רענון לא מוחק את הרשימה
+    localStorage.setItem('mq_queue', JSON.stringify(sendQueue));
     const list = document.getElementById('queueList');
     document.getElementById('queueCount').textContent = `${sendQueue.length} עובדים`;
     if (!sendQueue.length) {
@@ -565,9 +596,9 @@
     }
     list.innerHTML = sendQueue.map((c, i) => `
       <div class="queue-item">
-        <div>
-          <div class="queue-item-name">${c.firstName} ${c.lastName}</div>
-          <div class="queue-item-phone">${c.phone}</div>
+        <div class="qi-left">
+          <div class="qi-avatar">${INI(c)}</div>
+          <div><div class="queue-item-name">${c.firstName} ${c.lastName}</div><div class="queue-item-phone">${c.phone}</div></div>
         </div>
         <button class="btn-remove" onclick="removeFromQueue(${i})">✕</button>
       </div>`).join('');
@@ -598,7 +629,7 @@
     btn.textContent = sendQueue.length ? `📲 שלח לכולם (${sendQueue.length})` : '📲 שלח לכולם';
   }
 
-  // ── שחזור רשימה שמורה (אחרי רענון בטעות) ──
+  // ── שחזור רשימה שמורה ──
   try {
     const saved = JSON.parse(localStorage.getItem('mq_queue') || '[]');
     if (saved.length) { sendQueue = saved; renderQueue(); updateSendBtn(); }
@@ -634,8 +665,8 @@
         <div class="done-screen">
           <div class="done-icon">✅</div>
           <h2>הסתיים!</h2>
-          <p style="color:#aaa">נשלחו הודעות ל-${sendTotal} עובדים</p>
-          <button class="btn-done" onclick="finishSending()">חזור לרשימה חדשה</button>
+          <p>נשלחו הודעות ל-${sendTotal} עובדים</p>
+          <button class="btn-done" onclick="finishSending()">חזרה לרשימה חדשה</button>
         </div>`;
       return;
     }
@@ -649,25 +680,25 @@
     const nextName = sendQueue.length > 1 ? sendQueue[1].firstName + ' ' + sendQueue[1].lastName : 'סיום';
 
     el.innerHTML = `
-      <div class="progress-label">${stepNum} מתוך ${sendTotal}</div>
+      <div class="send-top">
+        <span>שולח · <b>${stepNum} מתוך ${sendTotal}</b></span>
+        <span class="type-pill type-${currentSys}">${SYS_BADGE[currentSys]}</span>
+      </div>
       <div class="progress-bar-wrap"><div class="progress-bar" style="width:${(stepNum/sendTotal)*100}%"></div></div>
       <div class="send-card">
-        <div class="send-card-badge ${currentSys === 'atli' ? 'badge-atli' : currentSys === 'yeudi' ? 'badge-yeudi' : ''}" style="${currentSys === 'free' ? 'background:#2a2a3e;color:#e2b96f;border:1px solid #e2b96f;' : ''}">${currentSys === 'atli' ? '🟣 אטלי' : currentSys === 'yeudi' ? '⬜ יעודי' : currentSys === 'madim' ? '👕 מדים' : '✏️ הודעה חופשית'}</div>
+        <div class="send-avatar">${INI(c)}</div>
         <div class="send-card-name">${c.firstName} ${c.lastName}</div>
         <div class="send-card-phone">📞 ${c.phone}</div>
         <div class="send-card-msg">${msg}</div>
-        <a href="${waUrl}" target="_blank" class="btn-open-wa" onclick="waitForReturn()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.523 5.855L.057 23.17a1 1 0 001.225 1.225l5.316-1.466A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.51-5.166-1.4l-.371-.22-3.846 1.06 1.06-3.846-.22-.371A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          פתח וואטסאפ → שלח → חזור
-        </a>
-        <button class="btn-next-contact" onclick="nextStep()">הבא ← ${nextName}</button>
-        <button class="btn-skip-contact" onclick="nextStep()">דלג על ${c.firstName}</button>
-      </div>`;
+        <a href="${waUrl}" target="_blank" class="btn-open-wa" onclick="waitForReturn()">💬 פתח וואטסאפ ושלח</a>
+      </div>
+      <button class="btn-next-contact" onclick="nextStep()">הבא ← ${nextName}</button>
+      <button class="btn-skip-contact" onclick="nextStep()">דלג על ${c.firstName}</button>`;
   }
 
   window.nextStep = function() {
     sendQueue.shift(); // הסרה פיזית מהרשימה — נשלח או דולג
-    renderQueue();     // מעדכן גם את התצוגה במסך השליחה וגם את השמירה
+    renderQueue();     // מעדכן גם את התצוגה וגם את השמירה
     updateSendBtn();
     renderSendStep();
   };
@@ -689,7 +720,7 @@
         firstName: c.firstName, lastName: c.lastName, phone: c.phone,
         sys: currentSys, ts: Date.now()
       });
-      b.commit(); // ברקע — לא מעכב את פתיחת וואטסאפ
+      b.commit();
     } catch(e) { console.error(e); }
   }
 
@@ -724,25 +755,19 @@
     );
     document.getElementById('histCount').textContent = `${items.length} שליחות`;
     const el = document.getElementById('histList');
-    if (!items.length) {
-      el.innerHTML = '<div class="empty-queue">אין שליחות ביומן</div>';
-      return;
-    }
+    if (!items.length) { el.innerHTML = '<div class="empty-queue">אין שליחות ביומן</div>'; return; }
     el.innerHTML = items.map(h => {
       const d = new Date(h.ts);
       const date = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
       return `
       <div class="hist-item">
-        <div>
-          <div style="font-weight:bold;font-size:0.9rem;">${h.firstName} ${h.lastName}</div>
-          <div class="hist-item-date">${date}</div>
-        </div>
-        <span style="font-size:0.8rem;">${SYS_LABELS[h.sys] || h.sys}</span>
+        <div><div class="hist-name">${h.firstName} ${h.lastName}</div><div class="hist-item-date">${date}</div></div>
+        <span class="type-pill type-${h.sys}">${SYS_LABELS[h.sys] || h.sys}</span>
       </div>`;
     }).join('');
   };
 
-  // ── ניקוי אוטומטי: מחיקת רשומות יומן מעל 3 חודשים ──
+  // ── ניקוי אוטומטי ──
   window.cleanOldLogs = async function() {
     try {
       const { collection, getDocs, query, where, writeBatch } = window._fs;
@@ -802,28 +827,21 @@
     if (!newC.length) { status.textContent = '❌ לא נמצאו נתונים'; status.className = 'status-box error'; return; }
     try {
       const { collection, getDocs, writeBatch, doc } = window._fs;
-      const CHUNK = 450; // Firebase מגביל batch ל-500 פעולות
-
-      // מספרי טלפון מהאקסל החדש
+      const CHUNK = 450;
       const excelPhones = new Set(newC.map(c => c.phone.replace(/\D/g,'')));
 
-      // מחק את contacts הקיים — במנות
       const existing = await getDocs(collection(window._db, 'contacts'));
       for (let i = 0; i < existing.docs.length; i += CHUNK) {
         const b = writeBatch(window._db);
         existing.docs.slice(i, i + CHUNK).forEach(d => b.delete(d.ref));
         await b.commit();
       }
-
-      // כתוב את החדש — במנות, עם חיווי התקדמות
       for (let i = 0; i < newC.length; i += CHUNK) {
         const b = writeBatch(window._db);
         newC.slice(i, i + CHUNK).forEach((c, j) => b.set(doc(collection(window._db, 'contacts'), String(i + j)), c));
         await b.commit();
         status.textContent = `מעלה... ${Math.min(i + CHUNK, newC.length)} מתוך ${newC.length}`;
       }
-
-      // מחק מ-manual_contacts רק כפילויות לפי טלפון
       const manualSnap = await getDocs(collection(window._db, 'manual_contacts'));
       const dups = manualSnap.docs.filter(d => excelPhones.has((d.data().phone || '').replace(/\D/g,'')));
       for (let i = 0; i < dups.length; i += CHUNK) {
@@ -831,7 +849,6 @@
         dups.slice(i, i + CHUNK).forEach(d => b.delete(d.ref));
         await b.commit();
       }
-
       status.textContent = `✅ הועלו ${newC.length} עובדים${dups.length ? ` | הוסרו ${dups.length} כפילויות ידניות` : ''}`;
       status.className = 'status-box success';
       window.loadContacts();
