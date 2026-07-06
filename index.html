@@ -660,12 +660,14 @@
 
   window.nextStep = function() {
     sendIndex++;
+    localStorage.setItem('mq_queue', JSON.stringify(sendQueue.slice(sendIndex))); // שמור רק את מי שטרם נשלח
     renderSendStep();
   };
 
   window.waitForReturn = function() {
     window._waitingReturn = true;
     logSend(sendQueue[sendIndex]); // תיעוד ביומן — רק כשבאמת נפתח וואטסאפ
+    localStorage.setItem('mq_queue', JSON.stringify(sendQueue.slice(sendIndex + 1))); // הנוכחי נשלח — לא ישוחזר אם תצא
   };
 
   // ── SEND LOG ──
