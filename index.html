@@ -514,14 +514,20 @@
   };
 
   // ── MANUAL SEARCH ──
+  // ניקוי תווים בלתי-נראים (RTL marks מאקסל) ורווחים כפולים
+  function normName(s) {
+    return (s || '').toString().replace(/[‎‏‪-‮﻿]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
   window.onManualSearch = function() {
-    const q = document.getElementById('manualInput').value.trim();
+    const q = normName(document.getElementById('manualInput').value);
     const res = document.getElementById('searchResults');
     if (q.length < 2) { res.classList.add('hidden'); return; }
-    const found = contacts.filter(c =>
-      c.firstName.includes(q) || c.lastName.includes(q) ||
-      (c.firstName + ' ' + c.lastName).includes(q)
-    ).slice(0, 6);
+    const found = contacts.filter(c => {
+      const full = normName(c.firstName) + ' ' + normName(c.lastName);
+      const rev = normName(c.lastName) + ' ' + normName(c.firstName);
+      return full.includes(q) || rev.includes(q);
+    }).slice(0, 6);
     if (!found.length) { res.classList.add('hidden'); return; }
     res.innerHTML = found.map(c => `
       <div class="search-result-item" onclick="addManual('${c.phone}')">
@@ -785,8 +791,8 @@
     for (let i = 1; i < rows.length; i++) {
       const r = rows[i];
       if (!r || r.length < 2) continue;
-      const firstName = String(r[0] || '').trim();
-      const lastName = String(r[1] || '').trim();
+      const firstName = normName(r[0]);
+      const lastName = normName(r[1]);
       const phone = String(r[2] || '').trim();
       if (firstName && phone) newC.push({ firstName, lastName, phone });
     }
