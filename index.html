@@ -45,12 +45,16 @@
       box-shadow:0 1px 0 var(--border); position:sticky; top:0; z-index:100;
       transition:background .35s ease;
     }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .brand img { height:42px; width:42px; object-fit:cover; border-radius:10px; }
-    .nsms { display:inline-flex; white-space:nowrap; align-items:center; gap:1px; letter-spacing:.5px; }
+    .brand { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; }
+    header nav { width:100%; justify-content:center; }
+    .brand { position:relative; min-height:42px; }
+    .brand img { position:absolute; right:0; top:50%; transform:translateY(-50%); height:42px; width:42px; object-fit:cover; border-radius:10px; }
+    .nsms { display:inline-flex; white-space:nowrap; align-items:center; gap:2px; letter-spacing:.5px; color:#ff8a5c;
+      filter:drop-shadow(0 0 3px rgba(255,120,80,.65)) drop-shadow(0 0 10px rgba(168,85,247,.55)); }
+    .nsms > span { background:linear-gradient(90deg,#ff8a5c,#c26bff 70%,#8b5cf6); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
     .n-mark { height:.95em; width:.95em; flex:none; }
     .brand-eyebrow { font:700 10px Rubik; letter-spacing:1px; color:var(--muted); line-height:1; }
-    .brand-title { font:800 17px Rubik; white-space:nowrap; color:var(--text); line-height:1.3; }
+    .brand-title { font:800 22px Rubik; white-space:nowrap; color:var(--text); line-height:1.3; }
     nav { display:flex; gap:6px; align-items:center; }
     .nav-pill {
       background:transparent; border:1px solid var(--border); color:var(--muted);
