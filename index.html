@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>מערכת העברת הודעות</title>
+  <title>N-sms</title>
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="N-sms" />
   <meta name="theme-color" content="#F4F5F9" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -38,14 +41,16 @@
     /* ── HEADER ── */
     header {
       width:100%; background:var(--surface); padding:12px 16px calc(12px + env(safe-area-inset-top,0px));
-      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;
       box-shadow:0 1px 0 var(--border); position:sticky; top:0; z-index:100;
       transition:background .35s ease;
     }
     .brand { display:flex; align-items:center; gap:10px; }
-    .brand img { height:42px; width:42px; object-fit:contain; }
+    .brand img { height:42px; width:42px; object-fit:cover; border-radius:10px; }
+    .nsms { display:inline-flex; white-space:nowrap; align-items:center; gap:1px; letter-spacing:.5px; }
+    .n-mark { height:.95em; width:.95em; flex:none; }
     .brand-eyebrow { font:700 10px Rubik; letter-spacing:1px; color:var(--muted); line-height:1; }
-    .brand-title { font:700 16px Rubik; color:var(--text); line-height:1.3; }
+    .brand-title { font:800 17px Rubik; white-space:nowrap; color:var(--text); line-height:1.3; }
     nav { display:flex; gap:6px; align-items:center; }
     .nav-pill {
       background:transparent; border:1px solid var(--border); color:var(--muted);
@@ -205,7 +210,7 @@
 
     /* ── LOGIN ── */
     #loginScreen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:22px; padding:24px; width:100%; }
-    .login-crest { height:96px; width:96px; object-fit:contain; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.15)); }
+    .login-crest { height:96px; width:96px; object-fit:cover; border-radius:22px; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.25)); }
     .login-eyebrow { font:700 12px Rubik; letter-spacing:2px; color:var(--muted); text-align:center; }
     .login-title { font:800 26px Rubik; color:var(--text); text-align:center; margin-top:4px; }
     .login-sub { font:500 14px Assistant; color:var(--muted); text-align:center; margin-top:6px; max-width:280px; line-height:1.6; }
@@ -221,10 +226,9 @@
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen">
-  <img src="ashdod.png.png" class="login-crest" />
+  <img src="logo.png" class="login-crest" />
   <div>
-    <div class="login-eyebrow">בסיס אשדוד</div>
-    <div class="login-title">מערכת העברת הודעות</div>
+    <div class="login-title"><span class="nsms" dir="ltr"><svg class="n-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 20V9Q5.5 4 9 8L15 16Q18.5 20 18.5 15V4" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>-sms</span></span></div>
     <div class="login-sub">התחבר עם חשבון Google המורשה כדי להיכנס למערכת</div>
   </div>
   <div id="loginError" class="login-error">❌ אין לך הרשאה להשתמש באפליקציה זו</div>
@@ -239,10 +243,9 @@
 
 <header>
   <div class="brand">
-    <img src="ashdod.png.png" />
+    <img src="logo.png" />
     <div>
-      <div class="brand-eyebrow">בסיס אשדוד</div>
-      <div class="brand-title">העברת הודעות</div>
+      <div class="brand-title"><span class="nsms" dir="ltr"><svg class="n-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 20V9Q5.5 4 9 8L15 16Q18.5 20 18.5 15V4" fill="none" stroke="currentColor" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>-sms</span></span></div>
     </div>
   </div>
   <nav>
