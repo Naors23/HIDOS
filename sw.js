@@ -1,4 +1,4 @@
-const CACHE = 'nsms-v3';
+const CACHE = 'nsms-v4';
 
 self.addEventListener('install', () => self.skipWaiting());
 

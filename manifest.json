@@ -1,7 +1,9 @@
 {
+  "id": "/HIDOS/nsms",
   "name": "N-sms",
   "short_name": "N-sms",
-  "start_url": ".",
+  "start_url": "/HIDOS/",
+  "scope": "/HIDOS/",
   "display": "standalone",
   "background_color": "#0f0e14",
   "theme_color": "#0f0e14",
